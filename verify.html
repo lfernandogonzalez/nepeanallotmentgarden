@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+      <title>Nepean Allotment Garden Association</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="css/main.css">
+      <link rel="stylesheet" href="css/home.css">
+      <script type="text/javascript" src="js/home.js"></script>
+      <script src="js/amazon-cognito-identity.min.js"></script>
+      <script src="js/config.js"></script>
+  </head>
+  <body>
+    
+    <!--Header -->
+    <div class="header">
+      <div class="header_logo"><a href="index.html"><img src="img/logo.png"></a></div>
+      <div class="header_title">Nepean Allotment<br> Garden Association</div>
+      <div class="header_social">
+        <a href="http://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" width="20" border="0"></a>
+        <a href="http://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" width="20" border="0"></a>
+      </div>
+    </div>
+
+    <!-- Auth confirmation  -->
+    <center>
+      <div class="auth_confirmation">
+        <div class="loader" ><img src="img/loader.gif"></div>
+        <h3>Thank you for creating an account. <br>To access your profile, please sign in:</h3>
+        <br><br>
+        <!-- Sign in -->
+        <div class="sign_in">
+          <form>
+          <input type="text" id="sign_in_email" placeholder="Email address" required autofocus>
+          <br><input id="sign_in_password" type="password" placeholder="Password" required>
+          <br><input type="button" onclick="sign_in();" value="Sign in">
+          <div class="forgot_password_confirmation" onclick="window.location.href='https://naga.auth.us-east-1.amazoncognito.com/forgotPassword?client_id=6mkmj7cfc7vd5g04cgm6lrm6ql&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https%3A%2F%2Fmain.d1yypu660eufge.amplifyapp.com%2Fverify.html'">Forgot password?</div>
+          </form><br>
+          
+        </div>
+      </div>
+    </center>
+        
+          
+    </body>
+</html>

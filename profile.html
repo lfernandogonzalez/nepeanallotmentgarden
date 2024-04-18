@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="js/amazon-cognito-identity.min.js"></script>
+  <script src="js/config.js"></script>
+  <script type="text/javascript" src="js/profile.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="text/javascript" src="js/autocomplete.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+  <script>
+    window.onload = function(){
+      getUserAttributes();
+    }
+  </script>  
+  
+</head>
+
+<body>
+  
+    <!--Header -->
+    <div class="header">
+      <div class="header_logo"><a href="index.html"><img src="img/logo.png"></a></div>
+      <br><div class="header_title">Members area</div>
+      <div class="header_social">
+        <a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" width="20" border="0"></a>
+        <a href="https://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" width="20" border="0"></a>
+      </div>
+    </div>
+
+
+  
+  <!-- Left menu -->
+  <div class="left_bar">
+    <span id="my_account" onclick="select_option(this.id);  getUserAttributes();" style="color:white; background-color:green;">My Account</span>
+    <span id="my_garden_plots" onclick="select_option(this.id); get_my_plots();" style="">My garden plots</span>
+    <span id="request_new_plot" onclick="select_option(this.id); get_my_waiting_list();">Request new plot</span>
+    <span id="terms" onclick="select_option(this.id);">Terms and Conditions</span>
+    <div  id="admin_access" style="display:none">
+     <span id="admin_console" onclick="select_option(this.id);">Admin console</span>
+    </Div>
+
+  
+  </div>
+
+
+  <!--Right side-->
+
+  <div id="right_bar" class="right_bar">
+    
+    <div id="loading" style="display:none; width:100%; text-align:center; padding-top:80px"><img src="img/loader.gif" width="50"></div>
+
+    <!-- Profile -->
+    <div class="my_profile" id="my_account_container" style="display:none;">
+
+      <div class="profile_photo">
+        <input type="hidden" id="member_admin">
+        <h5>Email:</h5><span class="edit_profile" id="member_email">
+        <br><input class="edit_profile"  id="input_email" type="text" style="display:none">
+      </div>
+
+      <div id="profile_info">
+        <div id="profile_name"><b>Name:</b></div>
+        <div id="profile_mailing_address"><b>Address:</b></div>
+        <div id="profile_phone_number"><b>Phone number:</b></div>
+        <br><br><input type="button" style="display: inline-block; background-color: white;border:1px solid green; color:green;" onclick="open_edit_profile();" value="Edit Profile ✎"> 
+        <input type="button" onclick="signOut();" value="Sign out" style="display: inline-block; background-color:tomato">
+        
+      </div>
+      
+      <div id="profile_form" style="display:none">
+        <br>
+        <b>First name:</b><br>
+        <input class="edit_profile" id="input_first_name" type="text" Placeholder="First Name" >
+        <br><br>
+        <b>Last name:</b><br>
+        <input class="edit_profile" id="input_last_name"  type="text"  Placeholder="Last Name" > 
+        <br>
+        <br>
+        <b>Address:</b><br>
+        <input class="edit_profile" id="input_street_address"  type="text" Placeholder="Street Address" >
+        <br><input class="edit_profile" id="input_city"  type="text" style="width:100px" placeholder="City" Placeholder="Ottawa">
+        <select class="edit_profile" id="input_province"  style="width:80px"> <option></option><option value="AB">AB</option><option value="BC">BC</option><option value="MB">MB</option><option value="NB">NB</option><option value="NL">NL</option><option value="NS">NS</option><option value="ON" selected>ON</option><option value="PE">PE</option><option value="QC">QC</option><option value="SK">SK</option><option value="NT">NT</option><option value="NU">NU</option><option value="YT">YT</option></select>	
+        <br><input class="edit_profile" id="input_postal_code"  type="text" Placeholder="Postal Code">
+        <br><br>
+        <b>Phone Number:</b><br>
+        <input class="edit_profile"  id="input_phone_number" type="text" Placeholder="000-000-0000">
+        <br><br><input type="button" onclick="update_profile();" value="Save" style="display:inline-block; "> 
+        <input type="button" onclick="close_edit_profile();" value="Cancel" style="display:inline-block; background-color:tomato">
+        <br><br>
+      </div>
+      
+    </div>
+
+    <!--My Plots -->
+    <div class="my_plots" id="my_garden_plots_container">
+      <div class="tab" id="my_plots_tabs"></div>
+      <div id="my_plots_content"></div>
+      <br><br>
+    </div>
+
+    
+
+    <!--Request new plot -->
+    <div id="request_new_plot_container"  style="display:none">
+
+      <div id="request_plot_form_container" style="display:none">
+        <h5>Request a new plot</h5>
+        Please submit this form to join our waiting list. Raised beds are often available within a year or even mid-season.
+        Annuals take an average of 2+ years. Perennials are only available to existing members, and they take an average of 3+ years.
+        Preference is given to existing members on all plots.
+        
+        <br><br><b>Plot type:</b>
+        <br><select id="request_plot_type">
+          <option value="Raised beds">Raised bed</option>
+          <option value="Annuals">Annual</option>
+          <option value="Perennials"  id="perennial_option" >Perennial</option>
+          <option value="Lockers">Locker</option>
+        </select> 
+        
+        <br><br><b>Plot number:</b>
+        <br><select onchange="request_plot_number(this.value)"><option>First available</option><option value="special_request">Special request</option></select>
+        <input type="text" id="request_plot_number" style="display:none; width:250px" placeholder="Type in your request (eg, plot number)">
+        <br>
+        
+        <div id="exchange_plot_form" style="display:none">
+          <br><b>Would you like to trade in one of your current plots?</b>
+          <br><br><select  id="trade_option"><option value="No">No</option></select>
+        </div>
+
+        <br><input type="checkbox" onchange="document.getElementById('terms_button').disabled = !this.checked;" id="terms_checkbox"><label for="terms_checkbox">I have read and accept the </label><a target="_blank" href="NAGA_Terms_and_Conditions_v2022.pdf">NAGA Terms and Conditions</a> 
+        <br><br><input type="button" onclick="add_to_waiting_list();" id="terms_button"   value="Submit request" style="width:200px" disabled>
+      </div>
+
+      <!--My Waiting list -->
+      <div class="waiting_list" id="my_waiting_list_container"></div>
+
+    </div>
+
+    <!-- Terms -->
+    <div id="terms_container" style="display:none">
+      <h5 style="margin-top: 0;">Terms and Conditions</h5>
+      The garden plot(s) are for the sole use of the gardener and his or her immediate family only.  It cannot be assigned or transferred. 
+      <br><br>
+      This permit is valid from May 15, or after the plots have been tilled and staked, until Oct. 31. 
+      <br><br>
+      Crops, plant supports, string and all personal implements must be removed by Oct. 31 
+      <br><br>
+      Members must cooperate with the Maintenance Director, especially during clean up. 
+      <br><br>
+      Members must pull weeds regularly and control plant disease and insect infestation. 
+      <br><br>
+      Plots are to be kept neat and tidy and the long grass on the perimeters is to be trimmed. 
+      <br><br>
+      Non-plant refuse is to be placed in garbage receptacles.  Compost bins are provided for plant refuse except corn stalks and sunflowers. 
+      <br><br>
+      Corn stalks and Sunflowers are to be cut into six inch pieces and tilled into your plot at the end of the season.  DO NOT PLACE IN GARBAGE OR IN COMPOST BINS. 
+      <br><br>
+      Watering may be done only by hand. 
+      <br><br>
+      Use of DDT, ALL HERBICIDES, FUNGICIDES, AND INSECTICIDES, EXCEPT ORGANIC SUBSTANCES, IS FORBIDDEN. 
+      <br><br>
+      Produce is not to be sold, and any violation will result in the loss of your garden. 
+      <br><br>
+      Paths, laneways and the parking lot must be kept free and clear of obstacles and vegetation. 
+      <br><br>
+      Rocks are not to be thrown in the paths or laneways. 
+      <br><br>
+      All terms and conditions of the license will be strictly enforced.  This permit may be withdrawn by the Association at any time or not renewed should the member fail to use the garden plot in a good and proper manner, be guilty of improper conduct or interfere with other members’ garden plots. 
+      <br><br>
+      Any dispute arising from the use or occupation of a garden plot or locker shall be settled by the directors or a person designated by them. 
+      <br><br>
+      The Association shall incur no liability for loss, damage or injury sustained by the members or their family groups. 
+      <br><br>
+      As part of NAGA’s lease agreement with the City of Ottawa, no gardeners should ever park their vehicles in the Fire Station parking lot on Viewmount Drive. 
+      <br><br>
+      Should a NAGA members' vehicle ever be found parked at the Fire Station parking lot, the membership will be immediately cancelled with NAGA without any prior notifications. 
+    </div>
+
+    <!-- Admin console-->
+    <div id="admin_console_container" class="admin_console">
+      <h5>Admin Console</h5>
+      Only user with administrative access (board members) can access this section
+      <br><br>
+
+      <div class="admin_tab">
+        <button class="admin_tab_buttons" onclick="open_admin_tab(event, 'members_container');get_members();"  id="defaultTab">Members</button>
+        <button class="admin_tab_buttons" onclick="open_admin_tab(event, 'plots_container');get_plots();">Plots</button>
+        <button class="admin_tab_buttons" onclick="open_admin_tab(event, 'waiting_list_container');get_waiting_list()">Waiting List</button>
+        
+      </div>
+
+      <div id='members_container' class="admin_tab_content">        
+        <div class="admin_controls" id="admin_controls_members">
+
+          <div class="in_line">
+            <b>Filter:</b><br><select id="filter_members" onchange="filter('members')"><option value="all_members">All members</option><option value="current_renters" selected>Active members</option></select>
+          </div>
+
+          <div class="in_line">
+            <b>Search:</b><br>
+            <input type="text" id="search_members" onkeyup="search('members')" placeholder="Search by email">
+          </div>
+
+          <div class="in_line">
+            <input type="button" value="Add new user" style="width:150px" onclick="open_add_member()">
+          </div>
+          
+        </div>
+
+        <div id="add_member_form" class="admin_controls" style="display:none">
+            
+          <div class="in_line">
+            <b>Email:</b>
+            <br><input id="admin_input_email" type="text" placeholder="Email address">
+            <br><br><input id="admin_input_admin_checkbox" type="checkbox"> Admin
+          </div>
+
+          <div class="in_line">
+            <b>Name:</b>
+            <br><input id="admin_input_first_name" type="text" Placeholder="First Name">
+            <br><input id="admin_input_last_name" type="text"  Placeholder="Last Name">  
+          </div>
+
+          <div class="in_line">
+            <b>Address:</b>
+            <br><input id="admin_input_street_address" type="text" Placeholder="Street Address" style="width:200px" >
+            <br><input id="admin_input_city" type="text" placeholder="City" value="Ottawa" style="width:80px" >
+            <select id="admin_input_province" style="width:80px"> <option value="AB">AB</option><option value="BC">BC</option><option value="MB">MB</option><option value="NB">NB</option><option value="NL">NL</option><option value="NS">NS</option><option value="ON" selected>ON</option><option value="PE">PE</option><option value="QC">QC</option><option value="SK">SK</option><option value="NT">NT</option><option value="NU">NU</option><option value="YT">YT</option></select>	
+            <br><input id="admin_input_postal_code" type="text" Placeholder="Postal Code" style="width:100px" >
+          </div>
+
+          <div class="in_line">    
+            <b>Phone number:</b>
+            <br><input  id="admin_input_phone_number" type="text" Placeholder="Phone number" >
+          </div>
+          
+          <br>
+          <input type="button" onclick="add_member();" value="Add member">
+          <input type="button" onclick="close_add_member();" style="background-color: tomato" value="Cancel">
+
+         </div>
+
+          <div id="all_members"></div>
+          
+
+          
+        </div>
+
+
+        <div id="plots_container"  class="admin_tab_content">
+          <div class="admin_controls" id="admin_controls_plots">
+            
+            <div class="in_line">
+              <b>Filter:</b><br><select id="filter_plots" onchange="filter('plots')"><option value="all_plots">All plots</option></select>
+            </div>
+            <div class="in_line">
+              <b>Search:</b><br>
+            <input type="text" id="search_plots" onkeyup="search('plots')" placeholder="Search by plot number">
+          </div>
+            <div class="in_line" style="vertical-align: bottom;">
+              <input type="button" value="Add new plot" style="width:150px" onclick="open_add_plot()">
+            </div>
+
+          
+          </div>
+
+          <div id="add_plot_form" class="admin_controls" style="display:none">
+            
+            <br>
+            <div class="in_line">
+            <b>Plot number:</b><br><input type="text" id="input_plotId" style="width:100px" placeholder="Number" required>
+          </div>
+          <div class="in_line">
+            <b>Type:</b><br>
+            <select id="input_plot_type">
+              <option>Type</option>
+              <option>Raised beds</option>
+              <option>Annuals</option>
+              <option>Perennials</option>
+              <option>Lockers</option>
+            </select>
+          </div>
+          <div class="in_line">
+            <b>Size:</b><br>
+            <input type="text" id="input_plot_width"  placeholder="Width (feet)" style="width:100px" required>
+            <input type="text" id="input_plot_height"  placeholder="Height (feet)" style="width:100px" required>
+          </div>
+          <div class="in_line">
+            <b>Rate:</b><br>
+            <input type="text" id="input_plot_rate"  placeholder="Rate ($)" style="width:100px" required>
+          </div>
+            <br><input type="button" onclick="add_plot();" value="Add plot">
+            <input type="button" onclick="close_add_plot();" style="background-color: tomato" value="Cancel">
+            
+          </div>
+          <br><div id="all_plots"></div>
+        </div>
+
+        <div id="waiting_list_container" class="admin_tab_content">
+
+          <div class="admin_controls" id="admin_controls_waiting_list">
+            
+            <div class="in_line">
+              <b>Filter:</b><br><select id="filter_waiting_lists" onchange="filter('waiting_lists')"><option value="all_waiting_lists">All waiting lists</option></option></select>
+            </div>
+            <div class="in_line">
+              <b>Search:</b><br>
+              <input type="text" id="search_waiting_lists" onkeyup="search('waiting_lists')" placeholder="Search by email">
+            </div>
+
+            <div class="in_line" style="vertical-align: bottom;">
+              <input type="button" value="Add to waiting list" style="width:150px" onclick="open_add_waiting_list()">
+            </div>
+            
+
+            
+          </div>
+
+          <div id="add_waiting_list_form" class="admin_controls" style="display:none">
+          
+          <div class="in_line">
+            <br><b>Email:</b>
+            <br>
+            <div class='autocomplete'><input type="text" id="add_waiting_list_email"  placeholder="Email address" required></div>
+            
+          </div>
+          <div class="in_line">
+            <br><b>Plot type:</b>
+            <br><select id="add_waiting_list_plot_type">
+            <option value="Raised beds">Raised bed</option>
+            <option value="Annuals">Annual</option>
+            <option value="Perennials"  id="perennial_option" >Perennial</option>
+            <option value="Lockers">Locker</option>
+            </select> 
+          </div>
+          <div class="in_line">
+            <br><b>Desired plot:</b><br><input type="text" id="add_waiting_list_plot_number"  placeholder="" >
+          </div>
+          <div class="in_line">
+            <br><b>Plot to trade:</b><br><input type="text" id="add_waiting_list_trade_option"  placeholder="" >
+          </div>
+          <br>
+          
+          <input type="button" onclick="add_to_waiting_list(true);" style="width:150px" value="Add to waiting list">
+          <input type="button" onclick="close_add_waiting_list();" style="background-color: tomato" value="Cancel">
+          </div>
+          <br><div id="all_waiting_lists"></div>
+
+
+
+        </div>
+
+
+        </div>
+      </div>
+
+   <script type="text/javascript" src="js/admin.js"></script>
+
+
+    <script>
+      window.onload = function(){
+        const temp_var = getUserAttributes();
+        document.getElementById("defaultTab").click();
+      }
+    
+    </script>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <!-- Planting Calendar
+  <div style="width:90%; margin-left:auto; margin-right:auto">
+      <h3>Planting Calendar</h3>
+      <table cellspacing="30" >
+        <tr>
+          <td>
+            <table cellspacing="0" style="border-collapse:collapse; border:none; width:100%">
+              <tbody>
+                <tr>
+                  <td style="background-color:#ffd966; border:1px solid #000000; width:50px">&nbsp;</td>
+                  <td>&nbsp; Start inside</td>
+                </tr><tr>
+                  <td style="background-color:#6d9eeb; border:1px solid #000000; width:50px">&nbsp;</td>
+                  <td>&nbsp; Transplant</td>
+                </tr><tr>
+                  <td style="background-color:#e06666; border:1px solid #000000;; width:50px">&nbsp;</td>
+                  <td>&nbsp; Sow outside</td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+          <td width="100"></td>
+
+          <td><img src="img/tulip.png" width="50"></td><td>Spring frost <h3>May 18th</h3></td><td></td><td><img src="img/fall.png" width="50"></td><td>Fall frost<h3>September15th</h3></td>
+        </tr>
+      </table>
+      <br><br>
+
+      <h3>Greens, cole crops and alliums</h3>
+      <table cellspacing="0" style=" width:100%">
+        <thead>
+          <tr>
+            <th style="width:85px"></th>
+            <th width="10px"></th>
+            <th> Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+          </tr>
+          <tr>
+            <td>Onions</td>
+            <td></td><td></td><td style="background-color:#ffd966;">&nbsp;</td><td style="background-color:#ffd966;"></td><td style="background-color:#ffd966;"></td><td style="background-color:#ffd966;"></td><td style="background-color:#ffd966;"></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td style="background-color:#6fa8dc;">&nbsp;</td><td style="background-color:#6fa8dc;"></td><td style="background-color:#6fa8dc;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>Broccoli</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;"></td>
+            <td style="background-color:#e06666;"></td>
+            <td style="background-color:#e06666;"></td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Arugula
+            </td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;"></td>
+            <td style="background-color:#e06666;"></td>
+            <td style="background-color:#e06666;"></td>
+            <td style="background-color:#e06666;"></td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Cabbage
+            </td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;"> &nbsp;</td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp; </td>
+            <td style="background-color:#e06666;"> </td>
+            <td></td><td></td><td></td>
+            <td>
+          </tr>
+          <tr>
+            <td>
+            Chives
+            </td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td style="background-color:#ffd966;"></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td style="background-color:#6fa8dc;"></td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;"></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Bok Choy
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc; ">&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td>&nbsp;</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Brussel Sprouts
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Kale
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666; ">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Cauliflower
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc; ">&nbsp;</td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Lettuce
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td style="background-color:#ffd966;">&nbsp;</td>
+            <td style="background-color:#ffd966; ">&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td style="background-color:#6fa8dc;">&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666; ">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Spinach
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td></td><td></td><td></td><td></td>
+          </tr>
+          <tr>
+            <td>
+            Garlic
+            </td>
+            <td>&nbsp;</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            <td style="background-color:#e06666;">&nbsp;</td>
+            <td style="background-color:#e06666; ">&nbsp;</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><br><br><h3>Herbs, legumes and squashes</h3></td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <table cellspacing="0" style=" width:100%">
+        <thead>
+          <tr>
+            <th style="width:85px"></th>
+            <th width="10px"></th>
+            <th> Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+          </tr>
+        <tr>
+          <td>Parsley </td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Lemongrass
+          </td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;  ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Squash
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966; ">&nbsp;</td>
+          <td style="background-color:#ffd966; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Pumpkin
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Basil
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966; ">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Cucumbers
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Oregano
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Beans
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Cilantro
+          </td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Peas
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Thyme
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Dill
+          </td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Fennel
+          </td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Ginger
+          </td>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br><br>
+    
+    <h3>Nightshades, roots and other vegetables</h3>
+    
+    <table cellspacing="0" style=" width:100%">
+      <thead>
+        <tr>
+          <th style="width:85px"></th>
+          <th width="10px"></th>
+          <th> Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+        </tr>
+        <tr>
+        <tr>
+          <td>
+          Celery
+          </td>
+          <td></td><td></td>
+          <td style="background-color:#ffd966;width:36px">&nbsp;</td>
+          <td style="background-color:#ffd966; ">&nbsp;</td>
+          <td style="background-color:#ffd966">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+          Tomatoes
+          </td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966">&nbsp;</td>
+          <td style="">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Peppers
+          </td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Tomatillos
+          </td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Eggplant
+          </td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Okra
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td style="background-color:#ffd966;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td style="">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td style="background-color:#6fa8dc;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td>
+          <td >&nbsp;</td>
+          <td >&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Parsnip
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>
+          Carrots
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Potatoes
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Beets
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Radish
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td>
+          Turnips
+          </td>
+          <td></td><td></td><td></td><td></td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;">&nbsp;</td>
+          <td style="background-color:#e06666;; ">&nbsp;</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    -->
+
+</body>
+
+
+</html>

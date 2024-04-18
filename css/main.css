@@ -1,0 +1,95 @@
+
+@font-face {
+  font-family: 'heavitas';
+  src: url('heavitas-webfont.woff2') format('woff2'),
+       url('heavitas-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'OpenSans-ExtraBold';
+  src: url('OpenSans-ExtraBold-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+a:link {
+  text-decoration: none;
+
+}
+
+a:hover {
+  color: green;
+}
+
+
+body {
+    font: 16px Arial, Helvetica, sans-serif;
+  
+  }
+  
+  h3 {
+    font-family: 'OpenSans-ExtraBold';
+    font-size: 18pt;
+    color: 07814E;
+    margin:0;
+  }
+  
+  h4 {
+    font-family: 'OpenSans-ExtraBold';
+    font-size: 14pt;
+    color: #000;
+    margin:0;
+  }
+  
+  h5 {
+    font-family: 'OpenSans-ExtraBold';
+    font-size: 10pt;
+    color: #000;
+    margin:5px;
+    margin-left:0px;
+  }
+  
+  h6 {
+    font-family: 'OpenSans-ExtraBold';
+    font-size: 24pt;
+    color: #851847;
+    margin:20px;
+  }
+  
+
+  
+  
+/* For medium mobile: */
+@media only screen and (min-width: 375px) {
+
+
+}
+
+
+
+ /* For large mobile: */
+ @media only screen and (min-width: 425px) {
+
+ }
+
+
+ /* For tablets: */
+@media only screen and (min-width: 768px) {
+
+}
+
+/* For laptop and desktop: */
+@media only screen and (min-width: 1024px) {
+  
+}
+
+/* For big laptop and desktop: */
+@media only screen and (min-width: 1440px) {
+
+
+
+}
