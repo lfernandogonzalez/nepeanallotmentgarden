@@ -4,7 +4,7 @@ function open_sign_up() {
   // document.querySelector('.sign_in').style.display = "none";
   // document.querySelector('.sign_out').style.display = "none";
 
-  window.open('https://naga.auth.us-east-1.amazoncognito.com/signup?client_id=6mkmj7cfc7vd5g04cgm6lrm6ql&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https%3A%2F%2Fmain.d1yypu660eufge.amplifyapp.com%2Fverify.html','_blank'); 
+  window.open('https://naga.auth.us-east-1.amazoncognito.com/login?client_id=6mkmj7cfc7vd5g04cgm6lrm6ql&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https%3A%2F%2Fwww.nepeanallotmentgarden.com%2Fverify.html','_blank'); 
 
 }
 
