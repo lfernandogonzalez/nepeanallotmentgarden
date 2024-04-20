@@ -52,7 +52,7 @@ async function get_user_info(email) {
 }
 
 function open_edit_profile(open) {
-  document.querySelector('.user_action_buttons').style.display = open ? "none" : "block";
+  document.querySelector('.overlay').style.display = open ? "block" : "none";
   document.querySelector('.edit_profile').style.display = open ? "block" : "none";
 }
 
@@ -221,7 +221,7 @@ function get_requested_plots() {
 }
 
 function open_request_plot(open) {
-  document.querySelector('.request_plot_button').style.display = open ? "none" : "block";
+  document.querySelector('.overlay').style.display = open ? "block" : "none";
   document.querySelector('.request_plot').style.display = open ? "block" : "none";
 }
 
