@@ -1,37 +1,5 @@
-body {
-    margin-right:10px;
-    margin-left:10px;
-}
-
-.header {
-  width: 100%;
-  color:#94C727;
-  font-family: 'heavitas';
-  font-size:12pt;
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 
 
-.header_logo img {
-  width: 250px;
-  border:0;
-  margin:0;
-  padding:0;
-}
-
-
-.header_title {
-  width:230px;
-  text-align: left;
-  display: inline-block;
-}
-
-
-.header_social {
-  display: inline-block;
-}
 
 .hero {
     display: inline-block;
@@ -58,16 +26,6 @@ body {
 .auth div {
     width:100%
 }
-
-
-
-h1 {
-    font-family: 'heavitas';
-    color: #07814E;
-    font-size: 20pt;
-    margin:2px;
-}
-  
 
 .auth input {
     padding: 10px;

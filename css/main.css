@@ -1,3 +1,8 @@
+body {
+  margin-right:10px;
+  margin-left:10px;
+  font: 16px Arial, Helvetica, sans-serif;
+}
 
 @font-face {
   font-family: 'heavitas';
@@ -26,42 +31,75 @@ a:hover {
 }
 
 
-body {
-    font: 16px Arial, Helvetica, sans-serif;
-  
-  }
-  
-  h3 {
-    font-family: 'OpenSans-ExtraBold';
-    font-size: 18pt;
-    color: 07814E;
-    margin:0;
-  }
-  
-  h4 {
-    font-family: 'OpenSans-ExtraBold';
-    font-size: 14pt;
-    color: #000;
-    margin:0;
-  }
-  
-  h5 {
-    font-family: 'OpenSans-ExtraBold';
-    font-size: 10pt;
-    color: #000;
-    margin:5px;
-    margin-left:0px;
-  }
-  
-  h6 {
-    font-family: 'OpenSans-ExtraBold';
-    font-size: 24pt;
-    color: #851847;
-    margin:20px;
-  }
+
+h1 {
+  font-family: 'heavitas';
+  color: #07814E;
+  font-size: 20pt;
+  margin:2px;
+}
+
+
+h3 {
+  font-family: 'OpenSans-ExtraBold';
+  font-size: 18pt;
+  color: 07814E;
+  margin:0;
+}
+
+h4 {
+  font-family: 'OpenSans-ExtraBold';
+  font-size: 14pt;
+  color: #000;
+  margin:0;
+}
+
+h5 {
+  font-family: 'OpenSans-ExtraBold';
+  font-size: 10pt;
+  color: #000;
+  margin:5px;
+  margin-left:0px;
+}
+
+h6 {
+  font-family: 'OpenSans-ExtraBold';
+  font-size: 24pt;
+  color: #851847;
+  margin:20px;
+}
   
 
   
+.header {
+  width: 100%;
+  color:#94C727;
+  font-family: 'heavitas';
+  font-size:12pt;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
+.header_logo img {
+  width: 250px;
+  border:0;
+  margin:0;
+  padding:0;
+}
+
+
+.header_title {
+  width:230px;
+  text-align: left;
+  display: inline-block;
+}
+
+
+.header_social {
+  display: inline-block;
+}
   
 /* For medium mobile: */
 @media only screen and (min-width: 375px) {
