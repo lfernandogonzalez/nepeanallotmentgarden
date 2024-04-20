@@ -34,11 +34,12 @@
   
 
   <!-- Loader -->  
-  <div style="display:none; width:100%; text-align:center; padding-top:80px"><img src="img/loader.gif" width="50"></div>
-
+  <div id="loader" style="display:none; width:auto; text-align:center;"><img src="img/loader.gif" width="30"></div>
+  
   <!-- Profile -->
   <div class="my_account">
     <h1>Welcome</h1>
+    
     <p><span id="member_email"></span></p>
 
     <!-- My Plots-->
@@ -54,7 +55,6 @@
       </p>
       <p><b>What type of plot would you like?</b></p>
       <select id="request_plot_type">
-        <option>Select one</option>
         <option value="Raised beds">Raised bed</option>
         <option value="Annuals">Annual</option>
         <option value="Perennials" id="perennial_option">Perennial</option>
@@ -88,7 +88,7 @@
 
       
     <!-- My Requested Plots -->
-    <input type="button" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
+    <input type="button" style="display:none" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
     <div class="requested_plots" style="display:none">
       <h4>You are on our waiting list</h4>
       <p>We have received your plot request and you are currently on our waiting list:</p>
@@ -122,7 +122,7 @@
     <!-- Edit profile -->
     <div class="edit_profile" style="display:none">
       <h4>Edit profile</h4>
-      <p>Please complete your profile information before requesting a plot.</p>
+      <p>Please complete your profile information in order to expedite plot assignment. </p>
       <p><b>Name:</b></p>
       <input type="text" id="edit_profile_first_name" Placeholder="First Name" >
       <br>
