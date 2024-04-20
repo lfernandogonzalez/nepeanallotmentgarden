@@ -64,3 +64,54 @@ input[type="button"][value="Sign out"] {
 input[type="button"][value="Submit request"]:disabled {
     background-color: rgb(103, 110, 103);
 }
+
+
+
+/* For medium mobile: */
+@media only screen and (min-width: 375px) {
+   
+}
+
+
+
+/* For large mobile: */
+@media only screen and (min-width: 425px) {
+
+}
+
+
+ /* For tablets: */
+@media only screen and (min-width: 768px) {
+    
+    .left_panel {
+        width:30%;
+        display:inline-block;
+        float:left;
+        
+    }
+
+    .right_panel {
+        width:65%;
+        display: inline-block;
+        float:left;
+        padding-left:30px;
+    }
+
+}
+
+/* For laptop and desktop: */
+@media only screen and (min-width: 1024px) {
+    body {
+        margin-right:10%;
+        margin-left:10%;
+    }
+  
+}
+
+/* For big laptop and desktop: */
+@media only screen and (min-width: 1440px) {
+    body {
+        margin-right:15%;
+        margin-left:15%;
+    }
+}
