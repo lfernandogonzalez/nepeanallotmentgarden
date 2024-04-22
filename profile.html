@@ -9,7 +9,6 @@
   <script type="text/javascript" src="js/profile.js"></script>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/profile.css">
-  <script type="text/javascript" src="js/autocomplete.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
   <script>
     window.onload = function(){
@@ -24,7 +23,7 @@
   <!--Header -->
   <div class="header">
     <div class="header_logo"><a href="index.html"><img src="img/logo.png"></a></div>
-    <br><div class="header_title">Members area</div>
+    <br><div class="header_title">Members only area</div>
     <div class="header_social">
       <a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" width="20" border="0"></a>
       <a href="https://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" width="20" border="0"></a>
@@ -62,11 +61,11 @@
         </select>
         
         <p><b>Plot number:</b></p>
-        <select onchange="request_plot_number(this.value)">
+        <select onchange="special_request(this.value)">
           <option>First available</option>
-          <option value="request_plot_number">Special request</option>
+          <option value="true">Special request</option>
         </select>
-        <input type="text" id="request_plot_number" style="display:none; width:250px" placeholder="Type in your request (eg, plot number)">
+        <input type="textarea" class="special_request_text"  placeholder="Type in your request (eg, plot number)">
         
         <div id="exchange_plot_form" style="display:none">
           <b>Would you like to trade in one of your current plots?</b>
@@ -75,7 +74,7 @@
           </select>
         </div>
 
-        <br><br>
+        <p></p>
         
         <input type="checkbox" onchange="document.getElementById('terms_button').disabled = !this.checked;" id="terms_checkbox">
         <label for="terms_checkbox">I have read and accept the </label>
@@ -96,7 +95,6 @@
           <br><b>Plot number:</b> <span id="requested_plot_number"></span>
           <br><b>Trade:</b> <span id="requested_trade_option"></span> <!-- Updated ID -->
           <br><b>Date joined:</b> <span id="requested_date_joined"></span> <!-- Updated ID -->
-          <br><br><input type="button" value="Cancel request" style="background-color:tomato;" onclick="cancel_plot_request()">
         </div>
       </div>
 
@@ -111,11 +109,12 @@
       <h4>Actions</h4>
       <div class="user_action_buttons">
         <input type="button" class="edit_profile_button" onclick="open_edit_profile(true);" value="Edit Profile"> 
-        <input type="button" style="display:none" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
+        <input type="button" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
         <div id="admin_access" style="display:none">
           <input type="hidden" id="member_admin">
-          <input type="button" value="Admin Console">
+          <input type="button" onclick="window.location.href='./admin.html'" value="Admin Console">
         </div>
+        <input type="button" class="cancel_plot_request_button" value="Cancel plot request" onclick="cancel_plot_request()">
         <input type="button" onclick="sign_out();" value="Sign out">
       </div>
 

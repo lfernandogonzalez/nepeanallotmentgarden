@@ -1,4 +1,66 @@
-// Function to open the sign-up form
+
+async function get_user() {
+  document.querySelector('.loader').style.display = "inline-block";
+  var data = { UserPoolId: _config.cognito.userPoolId, ClientId: _config.cognito.clientId };
+  var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+  var cognitoUser = userPool.getCurrentUser();
+
+  if (cognitoUser != null) {
+    cognitoUser.getSession(function (err, session) {
+      if (err) { console.log(err); return; }
+      console.log('session validity: ' + session.isValid());
+
+      cognitoUser.getUserAttributes(function (err, result) {
+        if (err) { console.log(err); return; }
+
+        email = result[2].getValue();
+        console.log("Logged in user:" + email);
+        get_user_info(email);
+      });
+    });
+  } else {
+    console.log("User is signed-out");
+    document.querySelector('.loader').style.display = "none";
+    document.querySelector('.sign_in').style.display = "inline-block";
+  }
+}
+
+async function get_user_info(email) {
+  const api_url = 'https://thv3sn3j63.execute-api.us-east-1.amazonaws.com/prod/get_naga_user_by_email?user_email=' + encodeURIComponent(email);
+  const api_response = await fetch(api_url);
+  const api_data = await api_response.json();
+  const userData = JSON.parse(api_data['body']);
+
+  document.getElementById('member_email').innerHTML = userData['email'];
+  document.querySelector('.sign_out').style.display = "inline-block";
+  document.querySelector('.loader').style.display = "none";
+  
+}
+
+
+function sign_out() {
+  const data = {
+    UserPoolId: _config.cognito.userPoolId,
+    ClientId: _config.cognito.clientId
+  };
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+  const cognitoUser = userPool.getCurrentUser();
+
+  if (cognitoUser != null) {
+    cognitoUser.getSession(function (err, session) {
+      if (err) { alert(err); return;}
+      console.log('session validity: ' + session.isValid());
+      cognitoUser.signOut();
+      console.log("Sign out successful");
+      document.querySelector('.sign_in').style.display = "inline-block";
+      document.querySelector('.sign_out').style.display = "none";
+    });
+  } else {
+    console.log("Already signed-out")
+  }
+  
+}
+
 function open_sign_up() {
   // document.querySelector('.sign_up').style.display = "inline-block";
   // document.querySelector('.sign_in').style.display = "none";
@@ -8,7 +70,7 @@ function open_sign_up() {
 
 }
 
-// Function to close the sign-up form
+
 function close_sign_up() {
   document.querySelector('.sign_up').style.display = "none";
   document.querySelector('.sign_in').style.display = "inline-block";

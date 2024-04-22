@@ -1,0 +1,26 @@
+input[type=button] {
+    padding:10px;
+    box-sizing: border-box;
+    background-color: #07814E;
+    color: #fff;
+    border: 0px;
+    cursor: pointer;
+}
+
+.admin_tab_buttons {
+    
+    
+}
+
+.admin_tab_content {
+    padding:10px;
+    border:1px solid black;
+}
+
+#plots_container, #waiting_list_container {
+    display: none;
+}
+
+.in_line {
+    display: inline-block;
+}

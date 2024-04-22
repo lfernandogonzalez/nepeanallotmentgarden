@@ -1,4 +1,4 @@
-input[type=button], input[type=text], select  {
+input[type=button], input[type=text],input[type=textarea], select  {
     padding: 10px;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -28,6 +28,15 @@ input[type=button] {
     display: none;
 }
 
+.request_plot_button {
+    display:none
+}
+.special_request_text {
+    display:none; 
+}
+.cancel_plot_request_button {
+    display:none
+}
 .my_plots {
     width:100%;
 }
@@ -66,6 +75,7 @@ input[type=button] {
 }
 
 input[type="button"][value="Cancel"],
+input[type="button"][value="Cancel plot request"],
 input[type="button"][value="Sign out"] {
     background-color: tomato;
 }

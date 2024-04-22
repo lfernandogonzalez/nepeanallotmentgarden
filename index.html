@@ -32,7 +32,7 @@
       <div class="loader" ><img src="img/loader.gif"></div>
 
       <!-- Sign in -->
-      <div class="sign_in">
+      <div class="sign_in" style="display:none;">
         <form>
         <h1>Member sign in</h1>
         <input type="text" id="sign_in_email" placeholder="Email address" required autofocus>
@@ -46,11 +46,10 @@
 
       <!-- Sign out-->
       <div class="sign_out" style="display:none;">
-        <h3>You are logged in</h3>
-        <br><b><span id="member_name">Name</span></b>
-        <br><i><span id="member_email">Email</span></i>
-        <br>
-        <br><input type="button" onclick="window.location.href='./profile.html'" value ="My account" style="width:100px">  <input type=button onclick="signOut();"  style="width: 100px; background-color:tomato" value="Sign out">
+        <h1>You are logged in</h1>
+        <p><i><span id="member_email">Email</span></i></p>
+        <p>Go to "My Account"  to request garden plots, check out your assigned ones, tweak your profile, download our newsletters and grab some gardening tips!</p>
+        <br><input type="button" onclick="window.location.href='./profile.html'" value ="My account" style="width:100px">  <input type=button onclick="sign_out();"  style="width: 100px; background-color:tomato" value="Sign out">
       </div>
 
       <!-- Sign up-->
@@ -192,6 +191,10 @@
 
 
   </body>
+
+  <script>
+    window.onload = function(){ const temp_var = get_user();}
+  </script>
 </html>
 
 

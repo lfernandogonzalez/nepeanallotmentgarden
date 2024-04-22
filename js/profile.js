@@ -205,12 +205,13 @@ function get_requested_plots() {
 
 
         document.querySelector('.request_plot_button').style.display = 'none';
-        document.querySelector('.request_plot').style.display = 'none';
+        document.querySelector('.cancel_plot_request_button').style.display = 'block';
         document.querySelector('.requested_plots').style.display = 'block';
         console.log('My requested plots loaded');
       } else {
         document.querySelector('.requested_plots').style.display = 'none';
         document.querySelector('.request_plot_button').style.display = 'block'; 
+        document.querySelector('.cancel_plot_request_button').style.display = 'none'; 
         console.log('My requested plots loaded, none found');
       }
       hideLoader(); // Hide loader after requested plots are loaded
@@ -229,14 +230,12 @@ function request_plot(admin) {
   showLoader();
   const email = document.getElementById('member_email').innerHTML;
   const plot_type = document.getElementById('request_plot_type').value;
-  const trade_option = document.getElementById('request_plot_trade') ? document.getElementById('request_plot_trade').value : "No";
   const plot_number = document.getElementById('request_plot_number').value || "First available";
 
   const requestData = {
     email: email,
     plot_type: plot_type,
-    plot_number: plot_number,
-    trade_option: trade_option
+    plot_number: plot_number
   };
 
   fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {
@@ -246,10 +245,17 @@ function request_plot(admin) {
   })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
-      console.log("trade_option: " + trade_option);
       get_requested_plots();
+      document.querySelector('.request_plot').style.display = 'none';
+      document.querySelector('.overlay_none').style.display = 'none';
+        
     });
+}
+
+function special_request(special) {
+  
+  if (special === 'true') { document.querySelector('.special_request_text').style.display = 'block';}
+  else { document.querySelector('.special_request_text').style.display = 'none';}
 }
 
 function cancel_plot_request() {
@@ -293,7 +299,7 @@ function open_newsletter_archive() {
   newsletterArchive.style.display = newsletterArchive.style.display === "block" ? "none" : "block";
 }
 
-// Define showLoader and hideLoader functions
+
 function showLoader() {
   document.getElementById('loader').style.display = 'block';
   document.querySelector('.my_account').style.display = 'none';
