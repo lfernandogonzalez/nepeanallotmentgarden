@@ -69,112 +69,84 @@ function open_admin_tab(evt, tabName) {
 
 // MEMBER FUNCTIONS 
 
+
+
 function get_members(){
 
-
-    members_table=document.getElementById('all_members').innerHTML;
-    members_table=`<table class="list">`;
+    all_members=`<div class="list">`;
     row=0;
     members_email =[];
 
     const api_url = 'https://g1t81zygbh.execute-api.us-east-1.amazonaws.com/prod/get_naga_members';
     fetch(api_url, {
         method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: {'Accept': 'application/json','Content-Type': 'application/json'}
     })
     .then(response => response.json())
     .then(response => {
         response['Items'].forEach(element => {
             row++;
-            email=JSON.stringify(element['email']['S']).replace(/["']/g, "");
-            members_email.unshift(email);
-            first_name=JSON.stringify(element['first_name']['S']).replace(/["']/g, "");
-            last_name=JSON.stringify(element['last_name']['S']).replace(/["']/g, "");
-            street_address=JSON.stringify(element['street_address']['S']).replace(/["']/g, "");
-            city=JSON.stringify(element['city']['S']).replace(/["']/g, "");
-            province=JSON.stringify(element['province']['S']).replace(/["']/g, "");
-            postal_code=JSON.stringify(element['postal_code']['S']).replace(/["']/g, "");
-            if(element['phone_number']) { phone_number=JSON.stringify(element['phone_number']['S']).replace(/["']/g, ""); } else { phone_number='';}
+            members_email.unshift(element['email']['S']);
+            let last_logged_in = "";
             
-            last_logged_in="";
-            member_plots=""
-
-            element['member_plots'].forEach(member_plot => {
-                member_plots=member_plots+ " " + member_plot;
-            
-            })
-            
-            if(element['admin']) { if(element['admin']['BOOL']== true) {  admin_checkbox="checked"; admin_message="<img src=img/icon-star.png width=15> Administrator"; } else { admin_checkbox=""; admin_message=""; }  } else { admin_checkbox=""; admin_message=""; } 
-            if(element['has_plots']== true) {  has_plots=member_plots; } else { has_plots="";  } 
+            if(element['admin']) { if(element['admin']['BOOL']== true) {  admin_checkbox="checked"; admin_message="<br><img src=img/icon-star.png width=15> Administrator"; } else { admin_checkbox=""; admin_message=""; }  } else { admin_checkbox=""; admin_message=""; } 
+            if(element['has_plots']== true) {  has_plots=element['member_plots']['S']; } else { has_plots="";  } 
             if(element['last_logged_in']) {  last_logged_in=new Date(element['last_logged_in']['S']).toLocaleDateString("en-US", date_options); } else { last_logged_in="";  } 
-            full_name=first_name + " " + last_name;
-            full_address=street_address + "<br>" + city + ", " + province + "<br>" + postal_code;
             
-            members_table=members_table+ `
-                <tr>
-                <td valign=top>
-                    <div id="collapsed_member_info_${row}" onclick="expand_member_info(${row},true)" style="padding:5px;cursor:pointer; display:block">
-                        <span style="width:70%; display:inline-block;">${email}</span><span style="width:30%; text-align:right;  display:inline-block"><img style="vertical-align:bottom" src="img/icon-down.png" width="20"></span>
-                    </div>
-                
-                    <div id="display_member_info_${row}" style="padding:5px;display:none">
-                    <div onclick='expand_member_info(${row})'  style="width:100%; cursor:pointer;"><span  style="width:70%; display:inline-block;">${email}</span><span style="width:30%; text-align:right; display:inline-block"><img style="vertical-align:bottom" src="img/icon-up.png" width="20"></span></div>
-                    <br>
-                    <div class="in_line"><b>Name:</b><br>${full_name}</div>
-                    <div class="in_line"><b>Address:</b><br>${full_address}</div>
-                    <div class="in_line"><b>Phone number:</b><br>${phone_number}</div>
-                    <div class="in_line"><b>Plots:</b><p>${has_plots}</p></div>
-                    <div class="in_line"><b>Last logged in:</b><br>${last_logged_in}</div>
-                    <div class="in_line">
-                    ${admin_message} 
-                    <br><br>
-                    <input type=button onclick='open_edit_member(${row})' value='Edit' >
-                    
+            all_members=all_members+ `
+                <div>
+                    <div class="collapsed_member_info" id="collapsed_member_info_${row}" onclick="expand_member_info(${row},true)" >${element['email']['S']}</div>
+                    <div class="expanded_member_info" id="display_member_info_${row}">
+                        <div onclick='expand_member_info(${row})'  style="width:100%; cursor:pointer;"><span  style="width:70%; display:inline-block;">${element['email']['S']}</span><span style="width:30%; text-align:right; display:inline-block"><img src="img/icon-up.png" style="width:20px"></span></div>
+                        <p><b>Name:</b> ${element['first_name']['S'] + " " + element['last_name']['S'] }
+                        <br><b>Address:</b> ${element['street_address']['S'] + ". " + element['postal_code']['S']}
+                        <br><b>Phone number:</b> ${element['phone_number']['S']}
+                        <br><b>Plots:</b> ${has_plots}
+                        <br><b>Waiting list:</b>
+                        <br><b>Last logged in:</b> ${last_logged_in}
+                        ${admin_message} </p>
+                        <p><input type=button onclick='open_edit_member(${row})' value='Edit' ></p>
                     </div>
 
                     </div>
-                    <div id="edit_member_info_${row}" style="display:none">
-                        <div class="in_line">
+                    <div class="expanded_member_info" id="edit_member_info_${row}" style="display:none">
+                        <p>
                             <b>Email:</b>
-                            <br><span id="edit_member_email_${row}">${email}</span> 
+                            <br><span id="edit_member_email_${row}">${element['email']['S']}</span> 
                             <br><br><input type="checkbox" id="edit_member_admin_${row}" ${admin_checkbox}> Admin
-                        </div>
-                        <div class="in_line">
+                        </p>
+                        <p>
                             <b>Name:</b>
-                            <br><input id="edit_member_first_name_${row}" type="text" Placeholder="First Name" value="${first_name}">
-                            <br><input id="edit_member_last_name_${row}"  type="text"  Placeholder="Last Name" value="${last_name}" > 
-                        </div>
-                        <div class="in_line">
+                            <br><input id="edit_member_first_name_${row}" type="text" Placeholder="First Name" value="${element['first_name']['S']}">
+                            <input id="edit_member_last_name_${row}"  type="text"  Placeholder="Last Name" value="${element['last_name']['S']}" > 
+                        </p>
+                        <p>
                             <b>Address:</b>
-                            <br><input id="edit_member_street_address_${row}"  type="text" Placeholder="Street Address"  value="${street_address}">
-                            <br><input id="edit_member_city_${row}"  type="text" style="width:85px" placeholder="City"  value="${city}">
-                            <select id="edit_member_province_${row}"  style="width:70px"> <option>${province}</option><option value="AB">AB</option><option value="BC">BC</option><option value="MB">MB</option><option value="NB">NB</option><option value="NL">NL</option><option value="NS">NS</option><option value="ON" selected>ON</option><option value="PE">PE</option><option value="QC">QC</option><option value="SK">SK</option><option value="NT">NT</option><option value="NU">NU</option><option value="YT">YT</option></select>	
-                            <br><input id="edit_member_postal_code_${row}"  type="text" Placeholder="Postal Code" value="${postal_code}">
-                        </div>
-                        <div class="in_line">
+                            <br><input id="edit_member_street_address_${row}"  type="text" Placeholder="Street Address"  value="${element['street_address']['S']}">
+                            <input id="edit_member_postal_code_${row}"  type="text" Placeholder="Postal Code" value="${element['postal_code']['S']}">
+                        </p>
+                        <p>
                             <b>Phone Number:</b>
-                            <br><input id="edit_member_phone_number_${row}" type="text" Placeholder="000-000-0000" value="${phone_number}">
-                        </div>
-                        <div class="in_line"><b>Plots:</b><p>${has_plots}</p></div>
-                        <div class="in_line">
-                            <b>Last logged in:</b>
-                            <br>${last_logged_in}
-                        </div>
+                            <br><input id="edit_member_phone_number_${row}" type="text" Placeholder="000-000-0000" value="${element['phone_number']['S']}">
+                        </p>
+                        <p>
+                            <b>Plots:</b><p>${has_plots}</p>
+                        </p>
+
+                        <p>
+                            <b>Waiting list:</b><p></p>
+                        </p>
+
                         <br><br><input type="button" onclick="edit_member(${row})" value="Save"> 
                         <input type="button" onclick="close_edit_member(${row})" value="Cancel" style="background-color:tomato">
-                        <br><br><input type=button onclick='remove_member("${email}")' value='Delete Account' style="background-color:tomato">
+                        <br><br><input type=button onclick='remove_member("${element['email']['S']}")' value='Delete Account' style="background-color:tomato">
                         <br><br>
                     </div>
-                </td>
-            
-            </tr>`; 
+                </div>`; 
 
         });
         
-        document.getElementById('all_members').innerHTML=members_table+"</table>";
+        document.getElementById('all_members').innerHTML=all_members+"</div>";;
        if(document.getElementById("search_members").value )  { search('members'); }
        console.log('All members loaded') 
        

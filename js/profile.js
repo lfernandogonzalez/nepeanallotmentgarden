@@ -186,39 +186,34 @@ function get_my_plots() {
     });
 }
 
-function get_requested_plots() {
-  showLoader(); // Show loader while fetching requested plots
-  const email = document.getElementById('member_email').innerHTML;
+async function get_requested_plots() {
+  showLoader(); 
+  const api_url = 'https://thv3sn3j63.execute-api.us-east-1.amazonaws.com/prod/get_naga_user_by_email?user_email=' + encodeURIComponent(email);
+  const api_response = await fetch(api_url);
+  const api_data = await api_response.json();
 
-  const api_url = 'https://70tip4ggnj.execute-api.us-east-1.amazonaws.com/prod/get_my_waiting_list?email=' + encodeURIComponent(email);
-  fetch(api_url, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
-    .then(response => response.json())
-    .then(response => {
-      if (response.Item) {
-        const item = response.Item;
-        const date_added = new Date(item.date_added).toLocaleString();
+  if(JSON.parse(api_data['body'])['request_plot']) {
 
-        document.getElementById('requested_plot_type').innerText = item.plot_type;
-        document.getElementById('requested_plot_number').innerText = item.plot_number;
-        document.getElementById('requested_trade_option').innerText = item.trade_option;
-        document.getElementById('requested_date_joined').innerText = date_added;
+    document.getElementById('requested_plot_type').innerText = JSON.parse(api_data['body'])['request_plot_type'];
+    document.getElementById('requested_plot_number').innerText = JSON.parse(api_data['body'])['request_plot_number'];
+    document.getElementById('requested_date_joined').innerText = new Date(JSON.parse(api_data['body'])['request_plot_date']).toLocaleString();;
 
 
-        document.querySelector('.request_plot_button').style.display = 'none';
-        document.querySelector('.cancel_plot_request_button').style.display = 'block';
-        document.querySelector('.requested_plots').style.display = 'block';
-        console.log('My requested plots loaded');
-      } else {
-        document.querySelector('.requested_plots').style.display = 'none';
-        document.querySelector('.request_plot_button').style.display = 'block'; 
-        document.querySelector('.cancel_plot_request_button').style.display = 'none'; 
-        console.log('My requested plots loaded, none found');
-      }
-      hideLoader(); // Hide loader after requested plots are loaded
-    })
-    .catch(error => {
-      console.error('Error fetching waiting list:', error);
-    });
+    document.querySelector('.request_plot_button').style.display = 'none';
+    document.querySelector('.cancel_plot_request_button').style.display = 'block';
+    document.querySelector('.requested_plots').style.display = 'block';
+    console.log('My requested plots loaded');
+
+  } else {
+    document.querySelector('.requested_plots').style.display = 'none';
+    document.querySelector('.request_plot_button').style.display = 'block'; 
+    document.querySelector('.cancel_plot_request_button').style.display = 'none'; 
+    console.log('My requested plots loaded, none found');
+  }
+
+  hideLoader(); 
+
+
 }
 
 function open_request_plot(open) {
@@ -226,16 +221,18 @@ function open_request_plot(open) {
   document.querySelector('.request_plot').style.display = open ? "block" : "none";
 }
 
-function request_plot(admin) {
+function request_plot() {
   showLoader();
-  const email = document.getElementById('member_email').innerHTML;
-  const plot_type = document.getElementById('request_plot_type').value;
-  const plot_number = document.getElementById('request_plot_number').value || "First available";
+
+  const email = document.getElementById('member_email').textContent;
+  const request_plot_type = document.getElementById('request_plot_type').value;
+  const request_plot_number = document.querySelector('.request_plot_number').value || "First available";
 
   const requestData = {
-    email: email,
-    plot_type: plot_type,
-    plot_number: plot_number
+    email,
+    request_plot: true,
+    request_plot_type,
+    request_plot_number
   };
 
   fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {
@@ -243,48 +240,53 @@ function request_plot(admin) {
     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
     body: JSON.stringify(requestData)
   })
-    .then(response => response.json())
-    .then(response => {
-      get_requested_plots();
-      document.querySelector('.request_plot').style.display = 'none';
-      document.querySelector('.overlay_none').style.display = 'none';
-        
-    });
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
+  .then(response => {
+    get_requested_plots();
+    hideOverlay();
+  })
+  .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
+
+
 
 function special_request(special) {
   
-  if (special === 'true') { document.querySelector('.special_request_text').style.display = 'block';}
-  else { document.querySelector('.special_request_text').style.display = 'none';}
+  if (special === 'true') { document.querySelector('.request_plot_number').style.display = 'block';}
+  else { document.querySelector('.request_plot_number').style.display = 'none';}
 }
 
 function cancel_plot_request() {
-  if (!confirm('Are you sure you want to cancel this request? You will lose your place in line')) {
-    return;
-  }
+  if (!confirm('Are you sure you want to cancel this request? You will lose your place in line')) return;
 
-  const email = document.getElementById('member_email').innerHTML;
-  const api_url = 'https://naqr1xdbd7.execute-api.us-east-1.amazonaws.com/prod/delete_from_waiting_list?email=' + encodeURIComponent(email);
+  const email = document.getElementById('member_email').textContent;
+  const requestData = {
+    email,
+    request_plot: false,
+    request_plot_type: "",
+    request_plot_number: document.querySelector('.request_plot_number').value || "First available"
+  };
 
-  fetch(api_url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
+  fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestData)
   })
-    .then(response => response.json())
-    .then(response => {
-      console.log(response);
-      console.log('Item deleted from waiting list');
-      document.querySelector('.requested_plots').style.display = 'none';
-      document.querySelector('.request_plot_button').style.display = 'block';
-      get_requested_plots();
-    })
-    .catch(error => {
-      console.error('Error cancelling plot request:', error);
-    });
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
+  .then(response => {
+    get_requested_plots();
+    document.querySelector('.request_plot').style.display = 'none';
+    document.querySelector('.overlay').style.display = 'none';
+  })
+  .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
+
 
 function request_plot_number(value) {
   if (value == "special_request") {

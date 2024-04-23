@@ -31,7 +31,7 @@ input[type=button] {
 .request_plot_button {
     display:none
 }
-.special_request_text {
+.request_plot_number {
     display:none; 
 }
 .cancel_plot_request_button {
