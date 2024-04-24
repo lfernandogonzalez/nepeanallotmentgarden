@@ -46,23 +46,35 @@ input[type=button],input[type=text], select {
     color:black;
 }
 
-.collapsed_member_info {
-    cursor:pointer; 
-    display:block;
-    border-top: 1px solid black;
-    width:auto;
-    padding:5px;
+
+
+ /* Basic CSS styling */
+ .collapsed_member_info, .collapsed_requested_plot_info , .collapsed_plot_info {
+    cursor: pointer;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom:5px;
 }
 
-.collapsed_member_info:hover {
-    background-color:lightgray;
+.collapsed_member_info:hover,.collapsed_requested_plot_info:hover,.collapsed_plot_info:hover  {
+    background-color: #f0f0f0;
 }
 
-.expanded_member_info {
-    padding:5px;
-    display:none;
-    width:auto;
-    border-top: 1px solid black;
-    background-color: lightgray;
-    
+.expanded_member_info,.expanded_requested_plot_info,.expanded_plot_info {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f0f0f0;
 }
+
+.assign_plot_button, .cancel_assign_plot_button {
+    margin-left:10px; 
+    padding: 10px;
+
+}
+
+.cancel_assign_plot_button {
+    background-color: tomato;
+}
+

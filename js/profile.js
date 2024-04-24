@@ -29,8 +29,6 @@ async function get_user_info(email) {
   const api_url = 'https://thv3sn3j63.execute-api.us-east-1.amazonaws.com/prod/get_naga_user_by_email?user_email=' + encodeURIComponent(email);
   const api_response = await fetch(api_url);
   const api_data = await api_response.json();
-
-  console.log(api_data);
   const userData = JSON.parse(api_data['body']);
 
   document.getElementById('member_email').innerHTML = userData['email'];
@@ -245,8 +243,8 @@ function request_plot() {
     return response.json();
   })
   .then(response => {
+    open_request_plot(false);
     get_requested_plots();
-    hideOverlay();
   })
   .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
@@ -266,8 +264,9 @@ function cancel_plot_request() {
   const requestData = {
     email,
     request_plot: false,
-    request_plot_type: "",
-    request_plot_number: document.querySelector('.request_plot_number').value || "First available"
+    request_plot_type: " ",
+    request_plot_number: " ",
+    request_plot_date: " ",
   };
 
   fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {

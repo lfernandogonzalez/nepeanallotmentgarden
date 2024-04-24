@@ -89,9 +89,12 @@ function get_members(){
             members_email.unshift(element['email']['S']);
             let last_logged_in = "";
             
-            if(element['admin']) { if(element['admin']['BOOL']== true) {  admin_checkbox="checked"; admin_message="<br><img src=img/icon-star.png width=15> Administrator"; } else { admin_checkbox=""; admin_message=""; }  } else { admin_checkbox=""; admin_message=""; } 
-            if(element['has_plots']== true) {  has_plots=element['member_plots']['S']; } else { has_plots="";  } 
-            if(element['last_logged_in']) {  last_logged_in=new Date(element['last_logged_in']['S']).toLocaleDateString("en-US", date_options); } else { last_logged_in="";  } 
+            if (element['admin'] && element['admin']['BOOL']) { admin_checkbox = "checked"; admin_message = "<br><img src=img/icon-star.png width=15> Administrator";
+            } else { admin_checkbox = ""; admin_message = "";}
+            
+            has_plots = element['has_plots'] ? element['member_plots']['S'] : "";
+            request_plot = element['request_plot'] && element['request_plot']['BOOL'] ? element['request_plot_type']['S'] + ", " + element['request_plot_number']['S'] + ". " + element['request_plot_date']['S'] : "None";
+            last_logged_in = element['last_logged_in'] ? new Date(element['last_logged_in']['S']).toLocaleDateString("en-US", date_options) : "";
             
             all_members=all_members+ `
                 <div>
@@ -99,10 +102,10 @@ function get_members(){
                     <div class="expanded_member_info" id="display_member_info_${row}">
                         <div onclick='expand_member_info(${row})'  style="width:100%; cursor:pointer;"><span  style="width:70%; display:inline-block;">${element['email']['S']}</span><span style="width:30%; text-align:right; display:inline-block"><img src="img/icon-up.png" style="width:20px"></span></div>
                         <p><b>Name:</b> ${element['first_name']['S'] + " " + element['last_name']['S'] }
-                        <br><b>Address:</b> ${element['street_address']['S'] + ". " + element['postal_code']['S']}
+                        <br><b>Address:</b> ${element['street_address']['S'] + " " + element['postal_code']['S']}
                         <br><b>Phone number:</b> ${element['phone_number']['S']}
                         <br><b>Plots:</b> ${has_plots}
-                        <br><b>Waiting list:</b>
+                        <br><b>Requested plots:</b> ${request_plot} 
                         <br><b>Last logged in:</b> ${last_logged_in}
                         ${admin_message} </p>
                         <p><input type=button onclick='open_edit_member(${row})' value='Edit' ></p>
@@ -129,13 +132,16 @@ function get_members(){
                             <b>Phone Number:</b>
                             <br><input id="edit_member_phone_number_${row}" type="text" Placeholder="000-000-0000" value="${element['phone_number']['S']}">
                         </p>
-                        <p>
-                            <b>Plots:</b><p>${has_plots}</p>
-                        </p>
+                        <p><b>Plots:</b><p>${has_plots}</p>
+
+                        <p>Requested plots:<p>${request_plot}</p>
+                        
 
                         <p>
-                            <b>Waiting list:</b><p></p>
+                            
                         </p>
+
+                        
 
                         <br><br><input type="button" onclick="edit_member(${row})" value="Save"> 
                         <input type="button" onclick="close_edit_member(${row})" value="Cancel" style="background-color:tomato">
@@ -322,13 +328,544 @@ function close_edit_member (row) {
 
 
 
+/// WAITING LIST FUNCTIONS
+function get_waiting_list() {
+    document.getElementById('all_waiting_lists').innerHTML="";
+    const url = 'https://g1t81zygbh.execute-api.us-east-1.amazonaws.com/prod/get_naga_members';
+    fetch(url, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
+    .then(response => response.json())
+    .then(response => {
+        const plotTypeElements = {};
+
+        response['Items'].forEach((element, index) => {
+            if (element['request_plot'] && element['request_plot']['BOOL']) {
+                const {email, first_name, last_name, street_address, postal_code, phone_number, request_plot_type, request_plot_number, request_plot_date} = element;
+                
+                const plotType = request_plot_type['S'];
+                
+                if (!plotTypeElements[plotType]) {
+                    plotTypeElements[plotType] = [];
+                }
+
+                const collapsedDiv = document.createElement('div');
+                collapsedDiv.className = 'collapsed_requested_plot_info';
+                collapsedDiv.id = `collapsed_requested_plot_info_${index}`;
+                collapsedDiv.setAttribute('onclick', `expand_requested_plot_info(${index}, true,'${email['S']}','${plotType}')`);
+                collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
+                collapsedDiv.innerHTML = `<div style="align-self: center;">${email['S']}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
+
+                const expandedDiv = document.createElement('div');
+                expandedDiv.className = 'expanded_requested_plot_info';
+                expandedDiv.id = `expanded_requested_plot_info_${index}`;
+                expandedDiv.innerHTML = `
+                    <div onclick='expand_requested_plot_info(${index})' style="width: auto; cursor: pointer; display: flex; justify-content: space-between;">
+                        <div  style="align-self: center;">${email['S']}</div>
+                        <img src="img/icon-up.png"  style="width: 20px; align-self: center;">
+                    </div>
+                    <p><b>Name:</b> ${first_name['S']} ${last_name['S']}<br>
+                    <b>Address:</b> ${street_address['S']} ${postal_code['S']}<br>
+                    <b>Phone number:</b> ${phone_number['S']}<br>
+                    <b>Plots:</b> <span id="requesting_member_plots_${index}">Loading...</span><br>
+                    <b>Last logged in:</b><br>
+
+                    <p>
+                        <b>Requested plots:</b> ${request_plot_type['S']}, ${request_plot_number['S']}.<br>
+                        <b>Date requested:</b> ${request_plot_date['S']} <br>
+                    </p>
+                    
+                    <div id="assignable_plots_${index}"></div>
+                `;
+
+                plotTypeElements[plotType].push({collapsedDiv, expandedDiv});
+            }
+        });
+
+        const allWaitingLists = document.getElementById('all_waiting_lists');
+        Object.entries(plotTypeElements).forEach(([plotType, elements]) => {
+            const plotTypeHeading = document.createElement('h2');
+            plotTypeHeading.style.paddingLeft = '10px';
+            plotTypeHeading.textContent = plotType;
+            allWaitingLists.appendChild(plotTypeHeading);
+
+            elements.forEach(({collapsedDiv, expandedDiv}) => {
+                allWaitingLists.appendChild(collapsedDiv);
+                allWaitingLists.appendChild(expandedDiv);
+            });
+        });
+    });
+}
+
+
+
+
+
+
+function expand_requested_plot_info (index,open,email,plot_type){
+    
+    if(open)
+    {
+        document.getElementById('collapsed_requested_plot_info_'+index).style.display='none';
+        document.getElementById('expanded_requested_plot_info_'+index).style.display='block';
+        get_member_plots(email,"requesting_member_plots_"+index);
+        assign_requested_plot(index,email,plot_type);
+        
+    } else {
+        document.getElementById('collapsed_requested_plot_info_'+index).style.display='flex';
+        document.getElementById('expanded_requested_plot_info_'+index).style.display='none';
+    }
+
+}
+
+
+function get_member_plots(email,target) {
+    
+    const api_url = 'https://90oukjmsob.execute-api.us-east-1.amazonaws.com/prod/get_my_plots?email=' + encodeURIComponent(email);
+    console.log(api_url);
+  
+    fetch(api_url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        const member_plot_list = document.getElementById(target);
+          
+        if (response.length === 0) {
+            member_plot_list.innerHTML = "None";
+            console.log('My plots loaded');
+            return;
+        }
+        else {
+            member_plot_list.innerHTML = "";
+            response.forEach(element => {
+                plot_id = element['plotId']['S'].replace(/["']/g, "") + " ";
+                member_plot_list.innerHTML += plot_id;
+            });
+        }
+        console.log('Member plots loaded');
+      });
+  }
+
+
+async function assign_requested_plot(index, email,plot_type) {
+    const api_url = 'https://90oukjmsob.execute-api.us-east-1.amazonaws.com/prod/get_my_plots?plot_type=' + encodeURIComponent(plot_type);
+    
+    
+    var newDiv = document.createElement("div");
+    var selectInput = document.createElement("select");
+    selectInput.id = "plot_select_" + index;
+
+    // Fetch plot info from the API
+    
+    fetch(api_url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+    .then(response => response.json())
+    .then(response => {
+        
+        // Create an object to hold plot IDs grouped by plot types
+        var plotsByType = {};
+        response.forEach(plot => {
+            
+            // Only proceed if the occupant field is empty
+            if (!plot.occupant['S'] || plot.occupant['S'] === '') {
+                var plotId = plot.plotId['S'];
+                var plotType = plot.plot_type['S'];
+
+                // If plot type doesn't exist in plotsByType object, create it
+                if (!plotsByType[plotType]) {
+                    plotsByType[plotType] = [];
+                }
+
+                // Add plot ID to corresponding plot type array
+                plotsByType[plotType].push(plotId);
+            }
+        });
+
+        // Iterate over plotsByType object and create optgroup for each plot type
+        for (var type in plotsByType) {
+            var optgroup = document.createElement("optgroup");
+            optgroup.label = type;
+
+            // Append each plot ID to the corresponding optgroup
+            plotsByType[type].forEach(plotId => {
+                var option = document.createElement("option");
+                option.text = plotId;
+                option.value = plotId;
+                optgroup.appendChild(option);
+            });
+
+            // Append optgroup to the select input
+            selectInput.appendChild(optgroup);
+        }
+
+        // Append the select input to the new div
+        newDiv.appendChild(selectInput);
+
+        // Create a button for assigning the plot
+        var assignButton = document.createElement("button");
+        assignButton.textContent = "Assign Plot";
+        assignButton.className = "assign_plot_button"
+        assignButton.onclick = function() {
+            var selectedPlotId = selectInput.value;
+            assign_plot(selectedPlotId, email);
+        };
+
+        // Append the button to the new div
+        newDiv.appendChild(assignButton);
+
+         
+
+        // Get the div where the select input will be placed
+        var parentDiv = document.getElementById(`assignable_plots_${index}`);
+        parentDiv.innerHTML="";
+        
+        // Append the new div with select input and button to the parent div
+        parentDiv.appendChild(newDiv);
+    })
+    .catch(error => {
+        console.error('Error fetching plot info:', error);
+    });
+}
+
+
+
+
+
+  
+function get_waiting_list2()
+{
+    
+    document.getElementById('all_waiting_lists').innerHTML='<div id="waiting_list"></div>';
+    const api_url = 'https://omwtz3crjb.execute-api.us-east-1.amazonaws.com/prod';
+    fetch(api_url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(response => {  
+        
+        plot_types=JSON.parse(response); row=0; waiting_list_id=0;
+        plot_types.forEach(plot_type => {
+            row++
+            
+            if(document.getElementById('filter_waiting_lists').length <5 ) {
+                var option = document.createElement("option");
+                option.text =plot_type['Title'];
+                option.value="plot_type_" +plot_type['Title'].toLowerCase().replace(/ /g,'_');
+                document.getElementById('filter_waiting_lists').add(option);
+            }
+
+            document.getElementById('waiting_list').insertAdjacentHTML('beforebegin', `
+            <table class="list"  id="waiting_lists_${plot_type['Title'].toLowerCase().replace(/ /g,'_')}">
+                <tr><td><h3 style="padding-left:15px">${plot_type['Title']}</h3><span></span></td></tr>
+                <tr id="waiting_list_row_${row}">
+                </tr>
+                <tr><td><span><br><br></span></td></tr>
+            </table>
+            `);
+            
+            
+            
+            plot_type['Body'].forEach(item => {
+
+                waiting_list_id++
+
+                if(item['has_plots']['BOOL']==true) { has_plots="<img src='img/checkmark.png' alt='Active NAGA member' width='15'>" } else { has_plots=""}
+                document.getElementById("waiting_list_row_"+row).insertAdjacentHTML('afterend', `<tr>
+                
+                <td valign=top>
+                    <div id="collapsed_waiting_list_${waiting_list_id}" onclick="expand_waiting_list('${waiting_list_id}',true)" style="cursor:pointer; display:block">
+                    <span style="width:70%; display:inline-block;">${item['place']['N']}) ${item['email']['S']}</span><span style="width:30%; text-align:right; display:inline-block"><img style="vertical-align:bottom"  src="img/icon-down.png" width="20"></span>
+                    </div>
+                    <div id="expanded_waiting_list_${waiting_list_id}" style="display:none">
+                        <div onclick="expand_waiting_list('${waiting_list_id}')" style="padding:5px;cursor:pointer; display:block">
+                            <span style="width:70%; display:inline-block;">${item['place']['N']}) ${item['email']['S']}</span><span style="width:30%; text-align:right; display:inline-block"><img style="vertical-align:bottom"  src="img/icon-up.png" width="20"></span>
+                        </div>
+                        <div style="min-width:50px" class="in_line"><b>Position:</b><h3># ${item['place']['N']}</h3></div>
+                        <div class="in_line"><b>Email:</b><br><span id="assign_plot_email_${waiting_list_id}">${item['email']['S']}</span> ${has_plots }</div>
+                        <div class="in_line"><b>Desired plot:</b><br> ${item['plot_number']['S']}</div>
+                        <div class="in_line"><b>Date joined:</b><br> ${new Date(item['date_added']['S']).toLocaleDateString("en-US", date_options)} </div>
+                        
+                        <br>
+                        <div class="in_line">
+                            <div id="assign_plots_top_${waiting_list_id}">
+                                <input type='button' onclick='open_assign_plot(\"${waiting_list_id}\",\"${plot_type['Title']}\")' value='Assign'>
+                                <input type='button' onclick='delete_from_waiting_list(\"${item['email']['S']}\")' style="background-color:tomato" value='Delete'>
+                            </div>
+                            <div id="assign_plots_bottom_${waiting_list_id}" style="display:none">
+                            <b> Select plot:</b>
+                            <br> <select style="width:200px;" id='assign_plot_list_${waiting_list_id}'></select>
+                            <br><br> <input type='button' onclick='assign_plot(\"${waiting_list_id}\")' value='Submit'>
+                                <input type='button' onclick='close_assign_plot(\"${waiting_list_id}\")' style="background-color:tomato" value='Cancel'>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                </tr>`);
+            });
+
+        });
+        autocomplete(document.getElementById("add_waiting_list_email"), members_email);
+        search('waiting_lists');
+        console.log('All waiting lists loaded')
+    
+    });
+
+}
+
+
+function open_assign_plot(waiting_list_id,plot_type){
+    get_empty_plots(plot_type,waiting_list_id);
+    document.getElementById('assign_plots_top_'+waiting_list_id).style.display="none";
+    document.getElementById('assign_plots_bottom_'+waiting_list_id).style.display="inline-block";
+    
+}
+
+function close_assign_plot(waiting_list_id){
+    document.getElementById('assign_plots_top_'+waiting_list_id).style.display="inline-block";
+    document.getElementById('assign_plots_bottom_'+waiting_list_id).style.display="none";
+}
+
+
+function get_empty_plots(plot_type,waiting_list_id){
+    var select = document.getElementById("assign_plot_list_"+waiting_list_id);
+    select.innerHTML="";
+    const api_url = 'https://jawb81aeuf.execute-api.us-east-1.amazonaws.com/prod/get_empty_plots?plot_type=' + encodeURIComponent(plot_type);
+    
+    fetch(api_url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(response => { 
+      
+      response.forEach(element => {
+        var el = document.createElement("option");
+        el.textContent = element['plotId']['S'];
+        el.value = element['plotId']['S'];
+        select.appendChild(el);
+      });
+  
+      
+    })
+  
+  }
+
+
+function open_add_waiting_list(){
+    document.getElementById('add_waiting_list_form').style.display="block";
+    document.getElementById('admin_controls_waiting_list').style.display="none";
+}
+
+function close_add_waiting_list(){
+    document.getElementById('add_waiting_list_form').style.display="none";
+    document.getElementById('admin_controls_waiting_list').style.display="block";
+}
+
+
+function search(tab) {
+    document.getElementById("filter_"+tab).value="all_"+tab
+
+    var input, filter, ul, li, a, i, txtValue;
+    input = document.getElementById("search_"+tab);
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("all_"+tab);
+    li = ul.getElementsByTagName("td");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("span")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+
+    console.log('Search performed: ' + input.value);
+    
+}
+
+function filter(tab) {
+    var input, item, i, value;
+    input = document.getElementById("filter_"+tab).value;
+    item = document.getElementById("all_"+tab).getElementsByTagName("td");
+
+    if(input=="all_"+tab)
+    {
+        for (i = 0; i < item.length; i++) {
+            item[i].style.display = "";
+        }
+
+        console.log('Filter applied: All');
+    }
+
+    if(input=="current_renters")
+    {
+        for (i = 0; i < item.length; i++) {
+            value = item[i].getElementsByTagName("p")[0].innerHTML
+            if (value) {
+                item[i].style.display = "";
+            } else {
+                item[i].style.display = "none";
+            }
+        }
+
+        console.log('Filter applied: Members only');
+    }
+
+   
+
+    if(input.includes("plot_type_"))
+    {
+       console.log(input)
+       document.getElementById(tab+'_raised_beds').style.display="none";
+       document.getElementById(tab+'_annuals').style.display="none";
+       document.getElementById(tab+'_perennials').style.display="none";
+       document.getElementById(tab+'_lockers').style.display="none";
+       document.getElementById(tab+"_"+input.replace("plot_type_","")).style.display="";
+       
+        console.log('Filter applied');
+    }
+
+
+    if(input=="all_"+tab && tab != "members")
+    {
+       
+       document.getElementById(tab+'_raised_beds').style.display="";
+       document.getElementById(tab+'_annuals').style.display="";
+       document.getElementById(tab+'_perennials').style.display="";
+       document.getElementById(tab+'_lockers').style.display="";
+       
+        console.log('Filter applied: all waiting lists');
+    }
+}
+
+
+
+
 
 
 
 
 // PLOT FUNCTIONS
+function get_plots() {
+    document.getElementById('all_plots').innerHTML="";
+    const api_url = 'https://90oukjmsob.execute-api.us-east-1.amazonaws.com/prod/get_my_plots';
+    const plot_list = document.getElementById('all_plots');
+    let index = 0;
+  
+    fetch(api_url)
+    .then(response => response.json())
+    .then(response => {
+        // Group plots by plot_type
+        const plotsByType = response.reduce((acc, plot) => {
+            const plotType = plot.plot_type ? plot.plot_type['S'] : 'Unknown';
+            if (!acc[plotType]) {
+                acc[plotType] = [];
+            }
+            acc[plotType].push(plot);
+            return acc;
+        }, {});
 
-function get_plots()
+        // Sort plot types alphabetically, except 'lockers' which will be placed last
+        const plotTypes = Object.keys(plotsByType)
+            .filter(plotType => plotType !== 'Lockers') // Filter out 'lockers'
+            .sort()
+            .concat('Lockers'); // Append 'lockers' at the end
+
+        // Iterate over plot types and create divs
+        plotTypes.forEach(plotType => {
+            const plotsInType = plotsByType[plotType];
+            const plotTypeHeader = document.createElement('h2');
+            plotTypeHeader.style.paddingLeft = '10px';
+            plotTypeHeader.textContent = plotType;
+            plot_list.appendChild(plotTypeHeader);
+
+            plotsInType
+                .sort((a, b) => a.plotId['S'].localeCompare(b.plotId['S'])) // Sort plots within each group alphabetically by plotId
+                .forEach((plot) => {
+                    // Extract plot attributes
+                    const plotId = plot.plotId['S'];
+                    const occupant = plot.occupant ? plot.occupant['S'] : 'N/A';
+                    const height = plot.height ? plot.height['S'] : 'N/A';
+                    const width = plot.width ? plot.width['S'] : 'N/A';
+                    const rate = plot.rate ? plot.rate['S'] : 'N/A';
+                    const dateAssigned = plot.date_assigned ? plot.date_assigned['S'] : 'N/A';
+                    const payment = plot.payment ? plot.payment['S'] : 'N/A';
+
+                    // Create collapsed and expanded divs for each plot
+                    const collapsedDiv = document.createElement('div');
+                    collapsedDiv.classList.add('collapsed_plot_info');
+                    collapsedDiv.id = `collapsed_plot_info_${index}`;
+                    collapsedDiv.setAttribute('onclick', `togglePlotInfo(${index})`);
+                    collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
+                    collapsedDiv.innerHTML = `
+                        <div style="align-self: center;">${plotId}</div>
+                        <img src="img/icon-down.png" style="width: 20px; align-self: center;">
+                    `;
+
+                    const expandedDiv = document.createElement('div');
+                    expandedDiv.classList.add('expanded_plot_info');
+                    expandedDiv.id = `expanded_plot_info_${index}`;
+                    expandedDiv.style.display = 'none'; // Initially hidden
+                    expandedDiv.innerHTML = `
+                        <div onclick='togglePlotInfo(${index})' style="width: auto; cursor: pointer; display: flex; justify-content: space-between;">
+                            <div style="align-self: center;">${plotId}</div>
+                            <img src="img/icon-up.png" style="width: 20px; align-self: center;">
+                        </div>
+                        <div class="plot_details">
+                            <br><b>Occupant:</b> ${occupant}
+                            <br><b>Size:</b>${height} x ${width}
+                            <br><b>Rate:</b>$${rate}
+                            <br><b>Date Assigned:</b>${dateAssigned}
+                            <br><b>Status:</b>${payment}
+                        </div>
+                    `;
+
+                    // Append the collapsed and expanded divs to the plot_list
+                    plot_list.appendChild(collapsedDiv);
+                    plot_list.appendChild(expandedDiv);
+                    index++;
+                });
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching plots:', error);
+    });
+}
+
+// Function to toggle between collapsed and expanded divs
+function togglePlotInfo(index) {
+    const collapsedDiv = document.getElementById(`collapsed_plot_info_${index}`);
+    const expandedDiv = document.getElementById(`expanded_plot_info_${index}`);
+    
+    if (collapsedDiv.style.display === 'none') {
+        collapsedDiv.style.display = 'flex';
+        expandedDiv.style.display = 'none';
+    } else {
+        collapsedDiv.style.display = 'none';
+        expandedDiv.style.display = 'block';
+    }
+}
+
+
+
+
+function get_plots_old()
 {
     document.getElementById('all_plots').innerHTML='<div id="all_plots_start"></div>';
     const api_url = 'https://q1ycf9s40a.execute-api.us-east-1.amazonaws.com/prod';
@@ -680,245 +1217,6 @@ function chage_assigned_date(plot_id){
 
 
 
-
-/// WAITING LIST FUNCTIONS
-  
-function get_waiting_list()
-{
-    
-    document.getElementById('all_waiting_lists').innerHTML='<div id="waiting_list"></div>';
-    const api_url = 'https://omwtz3crjb.execute-api.us-east-1.amazonaws.com/prod';
-    fetch(api_url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(response => {  
-        
-        plot_types=JSON.parse(response); row=0; waiting_list_id=0;
-        plot_types.forEach(plot_type => {
-            row++
-            
-            if(document.getElementById('filter_waiting_lists').length <5 ) {
-                var option = document.createElement("option");
-                option.text =plot_type['Title'];
-                option.value="plot_type_" +plot_type['Title'].toLowerCase().replace(/ /g,'_');
-                document.getElementById('filter_waiting_lists').add(option);
-            }
-
-            document.getElementById('waiting_list').insertAdjacentHTML('beforebegin', `
-            <table class="list"  id="waiting_lists_${plot_type['Title'].toLowerCase().replace(/ /g,'_')}">
-                <tr><td><h3 style="padding-left:15px">${plot_type['Title']}</h3><span></span></td></tr>
-                <tr id="waiting_list_row_${row}">
-                </tr>
-                <tr><td><span><br><br></span></td></tr>
-            </table>
-            `);
-            
-            
-            
-            plot_type['Body'].forEach(item => {
-
-                waiting_list_id++
-
-                if(item['has_plots']['BOOL']==true) { has_plots="<img src='img/checkmark.png' alt='Active NAGA member' width='15'>" } else { has_plots=""}
-                document.getElementById("waiting_list_row_"+row).insertAdjacentHTML('afterend', `<tr>
-                
-                <td valign=top>
-                    <div id="collapsed_waiting_list_${waiting_list_id}" onclick="expand_waiting_list('${waiting_list_id}',true)" style="cursor:pointer; display:block">
-                    <span style="width:70%; display:inline-block;">${item['place']['N']}) ${item['email']['S']}</span><span style="width:30%; text-align:right; display:inline-block"><img style="vertical-align:bottom"  src="img/icon-down.png" width="20"></span>
-                    </div>
-                    <div id="expanded_waiting_list_${waiting_list_id}" style="display:none">
-                        <div onclick="expand_waiting_list('${waiting_list_id}')" style="padding:5px;cursor:pointer; display:block">
-                            <span style="width:70%; display:inline-block;">${item['place']['N']}) ${item['email']['S']}</span><span style="width:30%; text-align:right; display:inline-block"><img style="vertical-align:bottom"  src="img/icon-up.png" width="20"></span>
-                        </div>
-                        <div style="min-width:50px" class="in_line"><b>Position:</b><h3># ${item['place']['N']}</h3></div>
-                        <div class="in_line"><b>Email:</b><br><span id="assign_plot_email_${waiting_list_id}">${item['email']['S']}</span> ${has_plots }</div>
-                        <div class="in_line"><b>Desired plot:</b><br> ${item['plot_number']['S']}</div>
-                        <div class="in_line"><b>Trade:</b><br> ${item['trade_option']['S']}</div>
-                        <div class="in_line"><b>Date joined:</b><br> ${new Date(item['date_added']['S']).toLocaleDateString("en-US", date_options)} </div>
-                        
-                        <br>
-                        <div class="in_line">
-                            <div id="assign_plots_top_${waiting_list_id}">
-                                <input type='button' onclick='open_assign_plot(\"${waiting_list_id}\",\"${plot_type['Title']}\")' value='Assign'>
-                                <input type='button' onclick='delete_from_waiting_list(\"${item['email']['S']}\")' style="background-color:tomato" value='Delete'>
-                            </div>
-                            <div id="assign_plots_bottom_${waiting_list_id}" style="display:none">
-                            <b> Select plot:</b>
-                            <br> <select style="width:200px;" id='assign_plot_list_${waiting_list_id}'></select>
-                            <br><br> <input type='button' onclick='assign_plot(\"${waiting_list_id}\")' value='Submit'>
-                                <input type='button' onclick='close_assign_plot(\"${waiting_list_id}\")' style="background-color:tomato" value='Cancel'>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                </tr>`);
-            });
-
-        });
-        autocomplete(document.getElementById("add_waiting_list_email"), members_email);
-        search('waiting_lists');
-        console.log('All waiting lists loaded')
-    
-    });
-
-}
-
-
-function open_assign_plot(waiting_list_id,plot_type){
-    get_empty_plots(plot_type,waiting_list_id);
-    document.getElementById('assign_plots_top_'+waiting_list_id).style.display="none";
-    document.getElementById('assign_plots_bottom_'+waiting_list_id).style.display="inline-block";
-    
-}
-
-function close_assign_plot(waiting_list_id){
-    document.getElementById('assign_plots_top_'+waiting_list_id).style.display="inline-block";
-    document.getElementById('assign_plots_bottom_'+waiting_list_id).style.display="none";
-}
-
-function assign_plot(waiting_list_id){
-    email=document.getElementById('assign_plot_email_'+waiting_list_id).innerHTML;
-    plot_number=document.getElementById('assign_plot_list_'+waiting_list_id).value;
-    
-    fetch('https://q1hk67hzpe.execute-api.us-east-1.amazonaws.com/prod/', {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 
-        "email": email,
-        "plot_number":plot_number
-    })
-    })
-    .then(response => response.json())
-    .then(response => { 
-        console.log(response);
-        delete_from_waiting_list(email);
-        close_assign_plot(waiting_list_id)});
-               
-}
-
-function get_empty_plots(plot_type,waiting_list_id){
-    var select = document.getElementById("assign_plot_list_"+waiting_list_id);
-    select.innerHTML="";
-    const api_url = 'https://jawb81aeuf.execute-api.us-east-1.amazonaws.com/prod/get_empty_plots?plot_type=' + encodeURIComponent(plot_type);
-    
-    fetch(api_url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(response => { 
-      
-      response.forEach(element => {
-        var el = document.createElement("option");
-        el.textContent = element['plotId']['S'];
-        el.value = element['plotId']['S'];
-        select.appendChild(el);
-      });
-  
-      
-    })
-  
-  }
-
-
-function open_add_waiting_list(){
-    document.getElementById('add_waiting_list_form').style.display="block";
-    document.getElementById('admin_controls_waiting_list').style.display="none";
-}
-
-function close_add_waiting_list(){
-    document.getElementById('add_waiting_list_form').style.display="none";
-    document.getElementById('admin_controls_waiting_list').style.display="block";
-}
-
-
-function search(tab) {
-    document.getElementById("filter_"+tab).value="all_"+tab
-
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("search_"+tab);
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("all_"+tab);
-    li = ul.getElementsByTagName("td");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("span")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-        }
-    }
-
-    console.log('Search performed: ' + input.value);
-    
-}
-
-function filter(tab) {
-    var input, item, i, value;
-    input = document.getElementById("filter_"+tab).value;
-    item = document.getElementById("all_"+tab).getElementsByTagName("td");
-
-    if(input=="all_"+tab)
-    {
-        for (i = 0; i < item.length; i++) {
-            item[i].style.display = "";
-        }
-
-        console.log('Filter applied: All');
-    }
-
-    if(input=="current_renters")
-    {
-        for (i = 0; i < item.length; i++) {
-            value = item[i].getElementsByTagName("p")[0].innerHTML
-            if (value) {
-                item[i].style.display = "";
-            } else {
-                item[i].style.display = "none";
-            }
-        }
-
-        console.log('Filter applied: Members only');
-    }
-
-   
-
-    if(input.includes("plot_type_"))
-    {
-       console.log(input)
-       document.getElementById(tab+'_raised_beds').style.display="none";
-       document.getElementById(tab+'_annuals').style.display="none";
-       document.getElementById(tab+'_perennials').style.display="none";
-       document.getElementById(tab+'_lockers').style.display="none";
-       document.getElementById(tab+"_"+input.replace("plot_type_","")).style.display="";
-       
-        console.log('Filter applied');
-    }
-
-
-    if(input=="all_"+tab && tab != "members")
-    {
-       
-       document.getElementById(tab+'_raised_beds').style.display="";
-       document.getElementById(tab+'_annuals').style.display="";
-       document.getElementById(tab+'_perennials').style.display="";
-       document.getElementById(tab+'_lockers').style.display="";
-       
-        console.log('Filter applied: all waiting lists');
-    }
-}
 
 function add_many_members()
 {
