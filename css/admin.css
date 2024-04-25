@@ -49,18 +49,18 @@ input[type=button],input[type=text], select {
 
 
  /* Basic CSS styling */
- .collapsed_member_info, .collapsed_requested_plot_info , .collapsed_plot_info {
+ .collapsed_members_info, .collapsed_requested_plots_info , .collapsed_plots_info {
     cursor: pointer;
     border: 1px solid #ccc;
     padding: 10px;
     margin-bottom:5px;
 }
 
-.collapsed_member_info:hover,.collapsed_requested_plot_info:hover,.collapsed_plot_info:hover  {
+.collapsed_members_info:hover,.collapsed_requested_plots_info:hover,.collapsed_plots_info:hover  {
     background-color: #f0f0f0;
 }
 
-.expanded_member_info,.expanded_requested_plot_info,.expanded_plot_info {
+.expanded_members_info,.expanded_requested_plots_info,.expanded_plots_info {
     display: none;
     border: 1px solid #ccc;
     padding: 10px;
