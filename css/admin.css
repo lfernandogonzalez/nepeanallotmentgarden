@@ -78,3 +78,29 @@ input[type=button],input[type=text], select {
     background-color: tomato;
 }
 
+.expanded_box_toggle {
+    width:100%; 
+    cursor:pointer; 
+    display:flex; 
+}
+
+.add_member_form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    padding: 20px;
+    background-color: rgb(223, 223, 223);
+    z-index: 1000;
+    width: 90%; 
+    max-width: 300px; 
+    display: none;
+}
+
+.add_member_form input[type=button],
+.add_member_form input[type=text]{
+    width: 100%; 
+    box-sizing: border-box; 
+    margin-bottom:5px;
+}

@@ -7,23 +7,25 @@ function get_members() {
     fetch(api_url)
     .then(response => response.json())
     .then(response => {
-        response['Items'].forEach(element => {
-            const email = element['email']['S'];
-            const isAdmin = element['admin'] && element['admin']['BOOL'];
+        console.log(response);
+        
+        response.forEach(element => {
+            const email = element['email'];
+            const isAdmin = element['admin'];
             const admin_checkbox = isAdmin ? 'checked' : '';
             const admin_message = isAdmin ? "<br><img src=img/icon-star.png width=15> Administrator" : '';
-            const has_plots = element['has_plots'] ? element['member_plots']['S'] : '';
-            const request_plot = element['request_plot'] && element['request_plot']['BOOL'] ? `${element['request_plot_type']['S']}, ${element['request_plot_number']['S']}. ${element['request_plot_date']['S']}` : 'None';
-            const last_logged_in = element['last_logged_in'] ? new Date(element['last_logged_in']['S']).toLocaleDateString("en-US", date_options) : '';
+            const request_plot = element['request_plot'] ? `${element['request_plot_type']}, ${element['request_plot_number']}. ${element['request_plot_date']}` : 'None';
+            const last_logged_in = element['last_logged_in'] ? new Date(element['last_logged_in']).toLocaleDateString("en-US", date_options) : '';
 
             const collapsedDiv = document.createElement('div');
             collapsedDiv.classList.add('collapsed_members_info');
             collapsedDiv.id = `collapsed_members_info_${index}`;
-            collapsedDiv.setAttribute('onclick', `toggleMemberInfo(${index},'${email}')`);
+            collapsedDiv.setAttribute('onclick', `toggleMemberInfo(${index},"${email}")`);
             collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
             collapsedDiv.innerHTML = `
                 <div style="align-self: center;" class="search_key_members">${email}</div>
                 <img src="img/icon-down.png" style="width: 20px; align-self: center;">
+                <input type="hidden" class="has_plots" value="${element['has_plots']}">
             `;
 
             const expandedDiv = document.createElement('div');
@@ -31,14 +33,14 @@ function get_members() {
             expandedDiv.id = `display_members_info_${index}`;
             expandedDiv.style.display = 'none'; // Initially hidden
             expandedDiv.innerHTML = `
-                <div style="width:100%; cursor:pointer;" onclick='toggleMemberInfo(${index})'>
+                <div class="expanded_box_toggle" onclick='toggleMemberInfo(${index})'>
                     <span style="width:70%; display:inline-block;">${email}</span>
                     <span style="width:30%; text-align:right; display:inline-block"><img src="img/icon-up.png" style="width:20px"></span>
                 </div>
-                <p><b>Name:</b> <span id="member_first_name_${index}">${element['first_name']['S']}</span> <span id="member_last_name_${index}">${element['last_name']['S']}</span></p>
-                <p><b>Address:</b> <span id="member_street_address_${index}">${element['street_address']['S']}</span> <span id="member_postal_code_${index}"> ${element['postal_code']['S']}</span></p>
-                <p><b>Phone number:</b> <span id="member_phone_number_${index}">${element['phone_number']['S']}</span></p>
-                <p><b>Plots:</b> <span id="member_plots_${index}">Loading...</span></p>
+                <p><b>Name:</b> <span id="member_first_name_${index}">${element['first_name']}</span> <span id="member_last_name_${index}">${element['last_name']}</span></p>
+                <p><b>Address:</b> <span id="member_street_address_${index}">${element['street_address']}</span> <span id="member_postal_code_${index}"> ${element['postal_code']}</span></p>
+                <p><b>Phone number:</b> <span id="member_phone_number_${index}">${element['phone_number']}</span></p>
+                <p><b>Plots:</b><span id="member_plots_${index}">Loading...</span></p>
                 <p><b>Requested plots:</b> ${request_plot}</p>
                 <p><b>Last logged in:</b> ${last_logged_in}</p>
                 <p>${admin_message}</p>
@@ -46,13 +48,17 @@ function get_members() {
                     <div id="edit_member_button_${index}"> <input type="button"  onclick='open_edit_member(${index},true)' value='Edit' ></div>
                     <div id="save_edit_member_button_${index}"  style="display:none"><input type="button"onclick='save_edit_member(${index},"${email}")' value='Save'></div>
                     <div id="cancel_edit_member_button_${index}" style="display:none"><input type="button" onclick='open_edit_member(${index},false)' value='Cancel'></div>
+                    <div id="delete_member_button_${index}" style="display:none"><input type="button" onclick='delete_member("${email}")' value='Delete Member'></div>
                 </p>
             `;
 
             all_members_container.appendChild(collapsedDiv);
             all_members_container.appendChild(expandedDiv);
             index++;
+            
         });
+        console.log('Members loaded')
+        filter('members');
     })
     .catch(error => {
         console.error('Error fetching members:', error);
@@ -80,7 +86,7 @@ function toggleMemberInfo(index,email) {
 
 function open_edit_member(index, open) {
     const elements = ['first_name','last_name', 'street_address','postal_code', 'phone_number'];
-    const buttons = ['edit_member_button', 'save_edit_member_button', 'cancel_edit_member_button'];
+    const buttons = ['edit_member_button', 'save_edit_member_button', 'cancel_edit_member_button', 'delete_member_button'];
 
     elements.forEach(element => {
         const elementId = `member_${element}_${index}`;
@@ -130,46 +136,30 @@ function save_edit_member(index,email) {
 }
 
 
-function add_member(){
-    
-    email=document.getElementById('admin_input_email').value;
-    first_name=document.getElementById('admin_input_first_name').value;
-    last_name=document.getElementById('admin_input_last_name').value;
-    street_address=document.getElementById('admin_input_street_address').value;
-    postal_code=document.getElementById('admin_input_postal_code').value;
-    phone_number=document.getElementById('admin_input_phone_number').value;
-    //admin=document.getElementById('admin_input_admin_checkbox').checked;
-    
+function add_member() {
+    const formData = Object.fromEntries([
+        'email', 'first_name', 'last_name', 'street_address',
+        'postal_code', 'phone_number','admin'
+    ].map(field => [field, document.getElementById(`admin_input_${field}`).value]));
+
     fetch('https://baf4kiept7.execute-api.us-east-1.amazonaws.com/prod', {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 
-        "email": email,
-        "first_name":first_name,
-        "last_name":last_name,
-        "street_address":street_address,
-        "postal_code":postal_code,
-        "phone_number":phone_number
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
     })
-    })
-    .then(response => response.json())
-    .then(response => { console.log(response);close_add_member();get_members();})
-    
-    
+    .then(response => response.ok ? response.json() : Promise.reject('Failed to add member'))
+    .then(response => (console.log(response), open_add_member(), get_members()))
+    .catch(error => console.error('Error:', error));
 }
 
-function open_add_member(){
-    document.getElementById('add_member_form').style.display="block";
-    document.getElementById('admin_controls_members').style.display="none";
+
+function open_add_member(open){
+    
+    document.querySelector('.overlay').style.display = open ? "block" : "none";
+    document.querySelector('.add_member_form').style.display = open ? "block" : "none";
+
 }
 
-function close_add_member(){
-    document.getElementById('add_member_form').style.display="none";
-    document.getElementById('admin_controls_members').style.display="block";
-}
 
 function remove_member(email){if(confirm("Are you sure you want to remove this user? This cannot be undone.")==true){
     const api_url = 'https://ddgo7c2d6l.execute-api.us-east-1.amazonaws.com/prod/remove_member?email='+ encodeURIComponent(email);
@@ -189,8 +179,35 @@ function remove_member(email){if(confirm("Are you sure you want to remove this u
         get_members();
     })
   
+
+
     
 }}
+
+
+function delete_member(email) {
+    fetch('https://61kr45vgtl.execute-api.us-east-1.amazonaws.com/prod', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete member');
+        }
+        console.log('Member deleted successfully');
+        // Perform any additional actions here if needed
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle error here
+    });
+}
+
 
 
 

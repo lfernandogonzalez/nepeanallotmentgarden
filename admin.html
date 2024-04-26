@@ -47,7 +47,42 @@
             
         </div>
 
+
+
         <!-- Members -->
+
+
+        <div class="add_member_form"  style="display:none">
+            <h3>Add member</h3>
+            <p>
+                <b>Email:</b>
+                <br><input id="admin_input_email" type="text" placeholder="Email address">
+                <br><br><input id="admin_input_admin" type="checkbox"> Admin
+            </p>
+
+            <p>
+                <b>Name:</b>
+                <br><input id="admin_input_first_name" type="text" Placeholder="First Name">
+                <br><input id="admin_input_last_name" type="text"  Placeholder="Last Name">  
+            </p>
+
+            <p>
+                <b>Address:</b>
+                <br><input id="admin_input_street_address" type="text" Placeholder="Street Address" >
+                <br><input id="admin_input_postal_code" type="text" Placeholder="Postal Code" >
+            </p>
+
+            <p>    
+                <b>Phone number:</b>
+                <br><input  id="admin_input_phone_number" type="text" Placeholder="Phone number" >
+            </p>
+            
+            <input type="button" onclick="add_member();" value="Add member">
+            <input type="button" onclick="open_add_member(false);" style="background-color: tomato" value="Cancel">
+
+        </div>
+
+
         <div id='members_container' class="admin_tab_content"> 
             
             
@@ -62,49 +97,13 @@
                 </div>
 
                 <div class="in_line">
-                    <br><input type="button" value="Add new user" style="width:150px" onclick="open_add_member()">
+                    <br><input type="button" value="Add new user" style="width:150px" onclick="open_add_member(true)">
                 </div>
                 
             </div>
-
-            <div id="add_member_form" class="admin_controls" style="display:none">
-                
-                <div class="in_line">
-                    <b>Email:</b>
-                    <br><input id="admin_input_email" type="text" placeholder="Email address">
-                    <br><br><input id="admin_input_admin_checkbox" type="checkbox"> Admin
-                </div>
-
-                <div class="in_line">
-                    <b>Name:</b>
-                    <br><input id="admin_input_first_name" type="text" Placeholder="First Name">
-                    <br><input id="admin_input_last_name" type="text"  Placeholder="Last Name">  
-                </div>
-
-                <div class="in_line">
-                    <b>Address:</b>
-                    <br><input id="admin_input_street_address" type="text" Placeholder="Street Address" style="width:200px" >
-                    <br><input id="admin_input_city" type="text" placeholder="City" value="Ottawa" style="width:80px" >
-                    <select id="admin_input_province" style="width:80px"> <option value="AB">AB</option><option value="BC">BC</option><option value="MB">MB</option><option value="NB">NB</option><option value="NL">NL</option><option value="NS">NS</option><option value="ON" selected>ON</option><option value="PE">PE</option><option value="QC">QC</option><option value="SK">SK</option><option value="NT">NT</option><option value="NU">NU</option><option value="YT">YT</option></select>	
-                    <br><input id="admin_input_postal_code" type="text" Placeholder="Postal Code" style="width:100px" >
-                </div>
-
-                <div class="in_line">    
-                    <b>Phone number:</b>
-                    <br><input  id="admin_input_phone_number" type="text" Placeholder="Phone number" >
-                </div>
-                
-                <br>
-                <input type="button" onclick="add_member();" value="Add member">
-                <input type="button" onclick="close_add_member();" style="background-color: tomato" value="Cancel">
-
-            </div>
-
 
             <div id="all_members"></div>
-            
-
-            
+                        
         </div>
 
 

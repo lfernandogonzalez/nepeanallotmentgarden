@@ -21,6 +21,7 @@ function open_admin_tab(evt, tabName) {
 
 function search(tab) {
     var search_term, container, all_divs, search_key, i, txtValue;
+    document.getElementById("filter_"+tab).value="all_"+tab;
     search_term = document.getElementById("search_" + tab).value.toUpperCase();
     container = document.getElementById("all_" + tab);
     all_divs = container.getElementsByTagName("div");
@@ -36,37 +37,41 @@ function search(tab) {
         }
     }
     
-    
 }
 
 
 function filter(tab) {
-    var input, item, i, value;
+    var input,all_divs, i;
+    document.getElementById("search_" + tab).value="";
     input = document.getElementById("filter_"+tab).value;
-    item = document.getElementById("all_"+tab).getElementsByTagName("td");
-
+    all_divs = document.getElementById("all_members").getElementsByClassName("collapsed_members_info");
+    
+    
     if(input=="all_"+tab)
     {
-        for (i = 0; i < item.length; i++) {
-            item[i].style.display = "";
+        for (i = 0; i < all_divs.length; i++) {
+            all_divs[i].style.display = "flex";
         }
 
         console.log('Filter applied: All');
     }
 
-    if(input=="current_renters")
-    {
-        for (i = 0; i < item.length; i++) {
-            value = item[i].getElementsByTagName("p")[0].innerHTML
-            if (value) {
-                item[i].style.display = "";
+    if (input == "current_renters") {
+        for (i = 0; i < all_divs.length; i++) {
+            var this_div = all_divs[i];
+            var hasPlotsElement = this_div.querySelector(".has_plots");
+            
+            if (hasPlotsElement && hasPlotsElement.value === "true") {
+                this_div.style.display = "flex";
             } else {
-                item[i].style.display = "none";
+                this_div.style.display = "none";
             }
         }
-
-        console.log('Filter applied: Members only');
+        console.log('Members filtered: Active members')
     }
+
+    
+    
 
    
 

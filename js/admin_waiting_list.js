@@ -8,42 +8,45 @@ function get_waiting_list() {
     fetch(url, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
     .then(response => response.json())
     .then(response => {
+        console.log(response);
         const plotTypeElements = {};
 
-        response['Items'].forEach((element, index) => {
-            if (element['request_plot'] && element['request_plot']['BOOL']) {
+        response.forEach((element, index) => {
+            
+            if (element['request_plot']) {
+                console.log(element['email']);
                 const {email, first_name, last_name, street_address, postal_code, phone_number, request_plot_type, request_plot_number, request_plot_date} = element;
                 
-                const plotType = request_plot_type['S'];
+                const plotType = request_plot_type;
                 
                 if (!plotTypeElements[plotType]) {
                     plotTypeElements[plotType] = [];
                 }
 
                 const collapsedDiv = document.createElement('div');
-                collapsedDiv.className = 'collapsed_requested_plot_info';
+                collapsedDiv.className = 'collapsed_requested_plots_info';
                 collapsedDiv.id = `collapsed_requested_plots_info_${index}`;
-                collapsedDiv.setAttribute('onclick', `expand_requested_plot_info(${index}, true,'${email['S']}','${plotType}')`);  
+                collapsedDiv.setAttribute('onclick', `expand_requested_plot_info(${index}, true,'${email}','${plotType}')`);  
                 collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
-                collapsedDiv.innerHTML = `<div style="align-self: center;" class="search_key_requested_plots">${email['S']}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
+                collapsedDiv.innerHTML = `<div style="align-self: center;" class="search_key_requested_plots">${email}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
 
                 const expandedDiv = document.createElement('div');
                 expandedDiv.className = 'expanded_requested_plots_info';
                 expandedDiv.id = `expanded_requested_plots_info_${index}`;
                 expandedDiv.innerHTML = `
-                    <div onclick='expand_requested_plot_info(${index})' style="width: auto; cursor: pointer; display: flex; justify-content: space-between;">
-                        <div  style="align-self: center;">${email['S']}</div>
-                        <img src="img/icon-up.png"  style="width: 20px; align-self: center;">
+                    <div class="expanded_box_toggle" onclick='expand_requested_plot_info(${index})'>
+                    <span style="width:70%; display:inline-block;">${email}</span>
+                    <span style="width:30%; text-align:right; display:inline-block"><img src="img/icon-up.png" style="width:20px"></span>
                     </div>
-                    <p><b>Name:</b> ${first_name['S']} ${last_name['S']}<br>
-                    <b>Address:</b> ${street_address['S']} ${postal_code['S']}<br>
-                    <b>Phone number:</b> ${phone_number['S']}<br>
+                    <p><b>Name:</b> ${first_name} ${last_name}<br>
+                    <b>Address:</b> ${street_address} ${postal_code}<br>
+                    <b>Phone number:</b> ${phone_number}<br>
                     <b>Plots:</b> <span id="requesting_member_plots_${index}">Loading...</span><br>
                     <b>Last logged in:</b><br>
 
                     <p>
-                        <b>Requested plots:</b> ${request_plot_type['S']}, ${request_plot_number['S']}.<br>
-                        <b>Date requested:</b> ${request_plot_date['S']} <br>
+                        <b>Requested plots:</b> ${request_plot_type}, ${request_plot_number}.<br>
+                        <b>Date requested:</b> ${request_plot_date} <br>
                     </p>
                     
                     <div id="assignable_plots_${index}">Loading...</div><div id="assign_plot_confirmation_${index}"></div>
