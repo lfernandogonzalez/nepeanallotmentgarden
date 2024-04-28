@@ -7,7 +7,6 @@ function get_members() {
     fetch(api_url)
     .then(response => response.json())
     .then(response => {
-        console.log(response);
         
         response.forEach(element => {
             const email = element['email'];
@@ -30,7 +29,7 @@ function get_members() {
 
             const expandedDiv = document.createElement('div');
             expandedDiv.classList.add('expanded_members_info');
-            expandedDiv.id = `display_members_info_${index}`;
+            expandedDiv.id = `expanded_members_info_${index}`;
             expandedDiv.style.display = 'none'; // Initially hidden
             expandedDiv.innerHTML = `
                 <div class="expanded_box_toggle" onclick='toggleMemberInfo(${index})'>
@@ -48,7 +47,7 @@ function get_members() {
                     <div id="edit_member_button_${index}"> <input type="button"  onclick='open_edit_member(${index},true)' value='Edit' ></div>
                     <div id="save_edit_member_button_${index}"  style="display:none"><input type="button"onclick='save_edit_member(${index},"${email}")' value='Save'></div>
                     <div id="cancel_edit_member_button_${index}" style="display:none"><input type="button" onclick='open_edit_member(${index},false)' value='Cancel'></div>
-                    <div id="delete_member_button_${index}" style="display:none"><input type="button" onclick='delete_member("${email}")' value='Delete Member'></div>
+                    <div id="delete_member_button_${index}" style="display:none"><input type="button" onclick='delete_member("${email}",${index})' value='Delete Member'></div>
                 </p>
             `;
 
@@ -69,7 +68,7 @@ function get_members() {
 // Function to toggle between collapsed and expanded divs
 function toggleMemberInfo(index,email) {
     const collapsedDiv = document.getElementById(`collapsed_members_info_${index}`);
-    const expandedDiv = document.getElementById(`display_members_info_${index}`);
+    const expandedDiv = document.getElementById(`expanded_members_info_${index}`);
     
     if (collapsedDiv.style.display === 'none') {
         collapsedDiv.style.display = 'flex';
@@ -161,51 +160,25 @@ function open_add_member(open){
 }
 
 
-function remove_member(email){if(confirm("Are you sure you want to remove this user? This cannot be undone.")==true){
-    const api_url = 'https://ddgo7c2d6l.execute-api.us-east-1.amazonaws.com/prod/remove_member?email='+ encodeURIComponent(email);
+async function delete_member(email, index) {
+    if (!confirm('Are you sure you want to delete this user? This cannot be undone')) return;
+
+    const api_url = `https://z3j4qfxcel.execute-api.us-east-1.amazonaws.com/prod/delete_member?email=${encodeURIComponent(email)}`;
     
-  
-    fetch(api_url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+    try {
+        const response = await fetch(api_url);
+        const data = await response.json();
+
+        alert(data.body);
+        console.log(data.logs || "");
+        
+        if (response.ok) {
+            document.getElementById(`collapsed_members_info_${index}`).style.display = 'none';
+            document.getElementById(`expanded_members_info_${index}`).style.display = 'none';
         }
-    })
-    .then(response => response.json())
-    .then(response => {
-        console.log(JSON.stringify(response)); 
-        delete_from_waiting_list(email);
-        get_members();
-    })
-  
-
-
-    
-}}
-
-
-function delete_member(email) {
-    fetch('https://61kr45vgtl.execute-api.us-east-1.amazonaws.com/prod', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email: email
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to delete member');
-        }
-        console.log('Member deleted successfully');
-        // Perform any additional actions here if needed
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Handle error here
-    });
+    } catch (error) {
+        console.error("An error occurred while processing the request:", error);
+    }
 }
 
 

@@ -118,40 +118,45 @@
                 <input type="text" id="search_plots" onkeyup="search('plots')" placeholder="Search by plot number">
             </div>
                 <div class="in_line" style="vertical-align: bottom;">
-                <input type="button" value="Add new plot" style="width:150px" onclick="open_add_plot()">
+                <input type="button" value="Add new plot" style="width:150px" onclick="open_add_plot(true)">
                 </div>
 
             
             </div>
 
-            <div id="add_plot_form" class="admin_controls" style="display:none">
+            
+            <div class="add_plot_form" class="admin_controls" style="display:none">
                 
-                <div class="in_line">
-                <b>Plot number:</b><br><input type="text" id="input_plotId" style="width:100px" placeholder="Number" required>
+                <p>
+                    <b>Plot number:</b><br><input type="text" id="input_plotId" style="width:100px" placeholder="Number" required>
+                </p>
+
+                <p>
+                    <b>Type:</b><br>
+                    <select id="input_plot_type">
+                    <option>Select one</option>
+                    <option>Raised beds</option>
+                    <option>Annuals</option>
+                    <option>Perennials</option>
+                    <option>Lockers</option>
+                    </select>
+                </p>
+                <p>
+                    <b>Size:</b><br>
+                    <input type="text" id="input_plot_width"  placeholder="Width (feet)" style="width:100px" required>
+                    <input type="text" id="input_plot_height"  placeholder="Height (feet)" style="width:100px" required>
+                </p>
+                <p>
+                    <b>Rate:</b><br>
+                    <input type="text" id="input_plot_rate"  placeholder="Rate ($)" style="width:100px" required>
+                </p>
+                <p>
+                    <br><input type="button" onclick="add_plot();" value="Add plot">
+                    <input type="button" onclick="open_add_plot();" style="background-color: tomato" value="Cancel">
+                    
+                </p> 
             </div>
-            <div class="in_line">
-                <b>Type:</b><br>
-                <select id="input_plot_type">
-                <option>Type</option>
-                <option>Raised beds</option>
-                <option>Annuals</option>
-                <option>Perennials</option>
-                <option>Lockers</option>
-                </select>
-            </div>
-            <div class="in_line">
-                <b>Size:</b><br>
-                <input type="text" id="input_plot_width"  placeholder="Width (feet)" style="width:100px" required>
-                <input type="text" id="input_plot_height"  placeholder="Height (feet)" style="width:100px" required>
-            </div>
-            <div class="in_line">
-                <b>Rate:</b><br>
-                <input type="text" id="input_plot_rate"  placeholder="Rate ($)" style="width:100px" required>
-            </div>
-                <br><input type="button" onclick="add_plot();" value="Add plot">
-                <input type="button" onclick="close_add_plot();" style="background-color: tomato" value="Cancel">
-                
-            </div>
+
             <br><div id="all_plots"></div>
             </div>
 

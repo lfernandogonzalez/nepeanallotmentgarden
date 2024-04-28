@@ -84,7 +84,7 @@ input[type=button],input[type=text], select {
     display:flex; 
 }
 
-.add_member_form {
+.add_member_form, .add_plot_form {
     position: fixed;
     top: 50%;
     left: 50%;

@@ -1,14 +1,10 @@
-
-
-
-/// WAITING LIST FUNCTIONS
 function get_waiting_list() {
     document.getElementById('all_waiting_lists').innerHTML="";
     const url = 'https://g1t81zygbh.execute-api.us-east-1.amazonaws.com/prod/get_naga_members';
     fetch(url, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
     .then(response => response.json())
     .then(response => {
-        console.log(response);
+        
         const plotTypeElements = {};
 
         response.forEach((element, index) => {
@@ -225,7 +221,9 @@ function assign_plot(plot_id,email,index)
     })
         .then(response => response.json())
         .then(response => {
-            document.getElementById('assign_plot_confirmation_'+index).innerHTML="Plot assigned"
+            document.getElementById('collapsed_requested_plots_info_'+index).style.display='none';
+            document.getElementById('expanded_requested_plots_info_'+index).style.display='none';
+            console.log(response);
         });
 }
 
@@ -256,6 +254,7 @@ function get_empty_plots(plot_type,waiting_list_id){
   
   }
 
+  
 
 function open_add_waiting_list(){
     document.getElementById('add_waiting_list_form').style.display="block";
@@ -295,3 +294,5 @@ function chage_assigned_date(plot_id){
     
     document.getElementById("edit_plot_date_assigned_"+plot_id).value= new Date().toLocaleDateString("en-US", date_options);
 }
+
+

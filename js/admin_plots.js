@@ -64,11 +64,17 @@ function get_plots() {
                             <img src="img/icon-up.png" style="width: 20px; align-self: center;">
                         </div>
                         <div class="plot_details">
-                            <br><b>Occupant:</b> ${occupant}
-                            <br><b>Size:</b>${height} x ${width}
-                            <br><b>Rate:</b>$${rate}
-                            <br><b>Date Assigned:</b>${dateAssigned}
-                            <br><b>Status:</b>${payment}
+                            <p><br><b>Occupant:</b> <span id="plot_occupant_${index}">${occupant}</span></p>
+                            <p><b>Size:</b><span id="plot_height_${index}">${height}</span> x <span id="plot_width_${index}">${width}</span></p>
+                            <p><b>Rate:</b>$<span id="plot_rate_${index}">${rate}</span></p>
+                            <p><b>Date Assigned:</b><span id="plot_date_assigned_${index}">${dateAssigned}</span></p>
+                            <p><b>Status:</b><span id="plot_status_${index}">${payment}</span></p>
+                            <p>
+                                <div id="edit_plot_button_${index}"><input type="button" value="Edit" onclick="open_edit_plot(${index},true)"></div>
+                                <div id="save_edit_plot_button_${index}"  style="display:none"><input type="button"onclick='save_edit_plot(${index},"${plotId}")' value='Save'></div>
+                                <div id="cancel_edit_plot_button_${index}" style="display:none"><input type="button" onclick='open_edit_plot(${index},false)' value='Cancel'></div>
+                                <div id="delete_plot_button_${index}" style="display:none"><input type="button" onclick='delete_plot("${plotId}",${index})' value='Delete Plot'></div>
+                            </p>
                         </div>
                     `;
 
@@ -98,239 +104,67 @@ function togglePlotInfo(index) {
     }
 }
 
+function open_edit_plot(index, open) {
+    const elements = ['occupant','height', 'width','rate', 'date_assigned','status'];
+    const buttons = ['edit_plot_button', 'save_edit_plot_button', 'cancel_edit_plot_button', 'delete_plot_button'];
 
+    elements.forEach(element => {
+        const elementId = `plot_${element}_${index}`;
+        const elementEl = document.getElementById(elementId);
+        const inputValue = elementEl.textContent.trim();
 
-
-function get_plots_old()
-{
-    document.getElementById('all_plots').innerHTML='<div id="all_plots_start"></div>';
-    const api_url = 'https://q1ycf9s40a.execute-api.us-east-1.amazonaws.com/prod';
-    fetch(api_url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+        if (open) {
+            elementEl.innerHTML = `<br><input type="text" id="edit_plot_${element}_${index}" value="${inputValue}">`;
+        } else {
+            const inputEl = elementEl.querySelector('input');
+            elementEl.textContent = inputEl.value;
         }
-    })
-    .then(response => response.json())
-    .then(response => { 
-
-        plot_types=JSON.parse(response); row=0;
-        
-
-        plot_types.forEach(plot_type => {
-            console.log("Plot type: " + plot_type['Title']);
-            row++
-            if(document.getElementById('filter_plots').length <5 ) {
-                var option = document.createElement("option");
-                option.text =plot_type['Title'];
-                option.value="plot_type_" +plot_type['Title'].toLowerCase().replace(/ /g,'_');
-                document.getElementById('filter_plots').add(option);
-            }
-
-            document.getElementById('all_plots_start').insertAdjacentHTML('beforebegin', `
-             
-
-            <table class="list"  id="plots_${plot_type['Title'].toLowerCase().replace(/ /g,'_')}">
-                <tr><td><span></span><h3 style="padding-left:15px">${plot_type['Title']}</h3></td></tr>
-                <tr id="plots_row_${row}"></tr>
-                <tr><td><br><br><span></span></td></tr>
-            </table>
-            `);
-            
-            plot_type['Body'].forEach(plot => {
-                plot_id=plot['plotId']['S'];
-                
-                if(plot['occupant']['S']) {occupant=plot['occupant']['S'];} else {occupant=""; };
-                if(plot['height']['S']) {height=plot['height']['S'];} else {height=""};
-                if(plot['width']['S']) {width=plot['width']['S'];} else {width=""};
-                if(plot['rate']['S']) {rate=plot['rate']['S'];} else {rate=""};
-                if(plot['date_assigned']) {date_assigned=plot['date_assigned']['S'];} else {date_assigned=""};
-                if(plot['payment']) {payment=plot['payment']['S'];} else {payment=""};
-                if(payment=="Awaiting payment") { awaiting_selected="selected"; overdue_selected=""; paid_selected=""}
-                else if(payment=="Payment overdue") { awaiting_selected=""; overdue_selected="selected";paid_selected="selected"}
-                else if(payment=="Paid") { awaiting_selected=""; overdue_selected="";paid_selected="selected"}
-                else { awaiting_selected=""; overdue_selected="";paid_selected="";}
-
-                document.getElementById("plots_row_"+row).insertAdjacentHTML('afterend', `
-                <tr>
-                <td valign=top>
-
-                <div id="collapsed_plots_info_${plot_id}" onclick="expand_plot_info('${plot_id}',true)" style="padding:5px;cursor:pointer; display:block">
-                <span style="width:70%; display:inline-block;">${plot_id}</span><span style="width:30%; text-align:right; display:inline-block"><img  style="vertical-align:bottom" src="img/icon-down.png" width="20"></span>
-                </div>
-                    <div id="show_plot_info_${plot_id}" style="display:none">
-                    <div onclick="expand_plot_info('${plot_id}')" style="padding:5px;cursor:pointer; display:block">
-                         <span style="width:70%; display:inline-block;">${plot_id}</span><span style="width:30%; text-align:right; display:inline-block"><img  style="vertical-align:bottom" src="img/icon-up.png" width="20"></span>
-                    </div>
-                        <div class="in_line">
-                            <b>Plot number:</b>
-                            <br><h3><span>${plot_id}</span></h3>
-                        </div>
-
-                        <div class="in_line">
-                            <b>Size:</b>
-                            <br>${height} x ${width}
-                        </div>
-
-                        <div class="in_line">
-                            <b>Rate:</b>
-                            <br>$${rate}
-                        </div>
-                        
-                        <div class="in_line">
-                            <b>Occupant:</b>
-                            <br>${occupant}
-                        </div>
-
-                        <div class="in_line">
-                            <b>Date Assigned:</b>
-                            <br> ${date_assigned}
-                        </div>
-
-                        <div class="in_line">
-                            <b>Status:</b>
-                            <br>${payment}
-                        </div>
-
-                        <br>
-                        <input type='button' onclick='open_edit_plot("${plot['plotId']['S']}","${plot['plot_type']['S'] }")' value='Edit'>
-                        <input type='button' onclick='remove_plot("${plot['plotId']['S']}")' value='Delete' style='background-color:tomato'>
-                    
-                    </div>
-
-                    <div id="edit_plot_info_${plot_id}" style="display:none">
-
-                        <div class="in_line">
-                            <b>Plot number:</b>
-                            <br><h3><span id="edit_plot_number_${plot_id}">${plot_id}</span></h3>
-                        </div>
-
-                        <div class="in_line">
-                            <b>Size:</b>
-                            <br><input  style="width:40px; text-align:center;" type="text" id="edit_plot_height_${plot_id}" value="${height}">
-                            x <input style="width:40px; text-align:center;" type="text" id="edit_plot_width_${plot_id}" value="${width}">
-                        </div>
-
-                        <div class="in_line">
-                            <b>Rate:</b>
-                            <br> $<input style=" width:50px" type="text" id="edit_plot_rate_${plot_id}" value="${rate}">
-                        </div>
-                        
-                        <div class="in_line">
-                            <b>Occupant:</b>
-                            <div class='autocomplete'><input id='occupant_${plot_id}' onchange='chage_assigned_date("${plot_id}")' type='text' placeholder="Email address" name='occupant_${plot_id}' value='${occupant}' style="width:200px"></div>
-                            <br><br> or select from waiting list: 
-                            <br> <select style="width:200px;" onchange='select_from_waiting_list("${plot_id}")' id='select_from_waiting_list_${plot_id}'><option></option></select>
-                        </div>
-
-                        <div class="in_line">
-                            <b>Date Assigned:</b>
-                            <br> <input type="text" id="edit_plot_date_assigned_${plot_id}" value="${date_assigned}">
-                        </div>
-
-                        <div class="in_line">
-                            <b>Status:</b><br>
-                            <select id="edit_plot_status_${plot_id}">
-                                <option></option>
-                                <option value="Awaiting payment" ${awaiting_selected}>Awaiting payment</option>
-                                <option value="Payment overdue" ${overdue_selected}>Payment overdue</option>
-                                <option value="Paid" ${paid_selected}>Paid</option>
-                            </select>
-                        </div>
-
-                        <br>
-                        <input type='button'  onclick='edit_plot("${plot_id}",document.getElementById("occupant_${plot_id}").value);' value='Submit'>  
-                        <input type='button'  onclick='close_edit_plot("${plot_id}")' value='Cancel 'style='background-color:tomato'>
-
-
-                        <div class="in_line" id="edit_plot_buttons1_${plot_id}">
-                        </div>
-                        <div class="in_line" id="edit_plot_buttons2_${plot_id}" style="display:none">
-
-                    </div>
-a
-
-                           
-                        </div>
-                </td>
-                </tr>`);
-
-                
-                
-
-            });
-
-            search('plots');
-            console.log('All plots loaded')
-
-        });
-
-        
-
-        
     });
 
+    buttons.forEach(button => {
+        const buttonEl = document.getElementById(`${button}_${index}`);
+        buttonEl.style.display = open ? (button === 'edit_plot_button' ? 'none' : 'inline-block') : (button === 'edit_plot_button' ? 'inline-block' : 'none');
+    });
 }
 
-function edit_plot(plot_id, email){
-    
-    height=document.getElementById("edit_plot_height_"+plot_id).value;
-    width=document.getElementById("edit_plot_width_"+plot_id).value;
-    rate=document.getElementById("edit_plot_rate_"+plot_id).value;
-    date_assigned=document.getElementById("edit_plot_date_assigned_"+plot_id).value;
-    payment=document.getElementById("edit_plot_status_"+plot_id).value;
-    
+
+
+
+function save_edit_plot(index,plot_id) {
+    const requestBody = {
+        plotId:plot_id,
+        occupant: document.getElementById(`edit_plot_occupant_${index}`).value,
+        height: document.getElementById(`edit_plot_height_${index}`).value,
+        width: document.getElementById(`edit_plot_width_${index}`).value,
+        rate: document.getElementById(`edit_plot_rate_${index}`).value,
+        date_assigned: document.getElementById(`edit_plot_date_assigned_${index}`).value,
+        payment: document.getElementById(`edit_plot_status_${index}`).value,
+        
+    };
+
     fetch('https://cwjjxnn2dd.execute-api.us-east-1.amazonaws.com/prod/', {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 
-        "plotId": plot_id,
-        "occupant":email,
-        "height":height,
-        "width":width,
-        "rate":rate,
-        "payment":payment,
-        "date_assigned":date_assigned
-
-    })
-    })
-    .then(response => response.json())
-    .then(response => { 
-        
-        console.log(JSON.stringify(response));
-        delete_from_waiting_list(email);
-        get_plots();
-        
-        
-    
-    })
-    
-
-    
-}
-
-function delete_from_waiting_list(email,ask_confirm){
-  
-    if(ask_confirm)
-    {if(!confirm('Are you sure you want to cancel this request? You will loose your place in line')){ return;}}
-  
-    const api_url = 'https://naqr1xdbd7.execute-api.us-east-1.amazonaws.com/prod/delete_from_waiting_list?email='+encodeURIComponent(email);
-    
-    fetch(api_url, {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(requestBody)
     })
     .then(response => response.json())
     .then(response => {
-      console.log('Item deleted from waiting list');})
-  }
+        console.log(response);
+        open_edit_plot(index, false);
+    });
+}
+
+
+
+function open_add_plot(open){
+    
+    document.querySelector('.overlay').style.display = open ? "block" : "none";
+    document.querySelector('.add_plot_form').style.display = open ? "block" : "none";
+
+}
 
 function add_plot()
   {
@@ -350,27 +184,21 @@ function add_plot()
     })
     })
     .then(response => response.json())
-    .then(response => { console.log(response);  close_add_plot(); get_plots();})
+    .then(response => { console.log(response);  open_add_plot(); get_plots();})
     
     
   }
 
 
-function open_add_plot(){
-    document.getElementById('add_plot_form').style.display="block";
-    document.getElementById('admin_controls_plots').style.display="none";
-}
 
-function close_add_plot(){
-    document.getElementById('add_plot_form').style.display="none";
-    document.getElementById('admin_controls_plots').style.display="block";
-}
 
-function remove_plot(plot_id){if(confirm("Are you sure you want to remove this plot? This cannot be undone.")==true){
-    // email = document.getElementById('member_email').innerHTML;
-    const api_url = ' https://un7umkeqkc.execute-api.us-east-1.amazonaws.com/prod/remove_plot?plotId='+plot_id;
+
+async function delete_plot(plot_id, index) {
+    if (!confirm('Are you sure you want to delete this plot? This cannot be undone')) return;
+
+    const api_url = 'https://un7umkeqkc.execute-api.us-east-1.amazonaws.com/prod/remove_plot?plotId='+plot_id;
     
-  
+
     fetch(api_url, {
         method: 'GET',
         headers: {
@@ -379,60 +207,14 @@ function remove_plot(plot_id){if(confirm("Are you sure you want to remove this p
         }
     })
     .then(response => response.json())
-    .then(response => {console.log(JSON.stringify(response)); get_plots();})
-  
-}
-}
-
-
-  function open_edit_plot(plot_id,plot_type){
-    autocomplete(document.getElementById("occupant_"+ plot_id), members_email);
-
-    const api_url = 'https://omwtz3crjb.execute-api.us-east-1.amazonaws.com/prod';
-    fetch(api_url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(response => { 
-        response=JSON.parse(response);
-        response.forEach(element => {
+    .then(response => {console.log(JSON.stringify(response)); 
+        document.getElementById(`collapsed_plots_info_${index}`).style.display = 'none';
+        document.getElementById(`expanded_plots_info_${index}`).style.display = 'none';
         
-        if(element['Title']==plot_type){
-            element['Body'].reverse();
-            element['Body'].forEach(item => {
-                var select = document.getElementById("select_from_waiting_list_"+plot_id);
-                var el = document.createElement("option");
-                el.textContent = item['place']['N'] + " " + JSON.stringify(item['email']['S']).replace(/["']/g, "");
-                el.value = JSON.stringify(item['email']['S']).replace(/["']/g, "");
-                select.appendChild(el);
-                
-            });
-        }
-        
-
-    });
-
-    document.getElementById("show_plot_info_"+plot_id).style.display="none";
-    document.getElementById("edit_plot_info_"+plot_id).style.display="block";
-
-    
     })
 
-    
+
+}
 
 
-    
 
-  }
-
-
-function close_edit_plot(plot_id){
-    
-    document.getElementById("show_plot_info_"+plot_id).style.display="block";
-    document.getElementById("edit_plot_info_"+plot_id).style.display="none";
-    
-  }
