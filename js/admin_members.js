@@ -138,9 +138,15 @@ function save_edit_member(index,email) {
 function add_member() {
     const formData = Object.fromEntries([
         'email', 'first_name', 'last_name', 'street_address',
-        'postal_code', 'phone_number','admin'
-    ].map(field => [field, document.getElementById(`admin_input_${field}`).value]));
-
+        'postal_code', 'phone_number'
+    ].map(field => {
+        if (field === 'admin') {
+            return [field, document.getElementById(`admin_input_${field}`).checked];
+        } else {
+            return [field, document.getElementById(`admin_input_${field}`).value];
+        }
+    }));
+    
     fetch('https://baf4kiept7.execute-api.us-east-1.amazonaws.com/prod', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
