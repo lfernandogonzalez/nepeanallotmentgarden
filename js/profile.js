@@ -16,6 +16,7 @@ async function get_user() {
 
         email = result[2].getValue();
         console.log("Logged in user:" + email);
+        document.getElementById('member_email').innerHTML = email;
         get_user_info(email);
       });
     });
@@ -30,8 +31,10 @@ async function get_user_info(email) {
   const api_response = await fetch(api_url);
   const api_data = await api_response.json();
   const userData = JSON.parse(api_data['body']);
+  console.log('User data:' + JSON.stringify(api_data));
+  document.getElementById('has_plots').checked = userData['has_plots'] !== undefined ? userData['has_plots'] : 'false';
 
-  document.getElementById('member_email').innerHTML = userData['email'];
+  
 
   const member_admin = userData['admin'];
   if (member_admin) {
@@ -189,12 +192,14 @@ async function get_requested_plots() {
   const api_url = 'https://thv3sn3j63.execute-api.us-east-1.amazonaws.com/prod/get_naga_user_by_email?user_email=' + encodeURIComponent(email);
   const api_response = await fetch(api_url);
   const api_data = await api_response.json();
+  console.log(api_data);
 
   if(JSON.parse(api_data['body'])['request_plot']) {
 
     document.getElementById('requested_plot_type').innerText = JSON.parse(api_data['body'])['request_plot_type'];
     document.getElementById('requested_plot_number').innerText = JSON.parse(api_data['body'])['request_plot_number'];
     document.getElementById('requested_date_joined').innerText = new Date(JSON.parse(api_data['body'])['request_plot_date']).toLocaleString();;
+    document.getElementById('requested_plot_position').innerText = JSON.parse(api_data['body'])['waiting_list_position'];
 
 
     document.querySelector('.request_plot_button').style.display = 'none';
@@ -225,12 +230,15 @@ function request_plot() {
   const email = document.getElementById('member_email').textContent;
   const request_plot_type = document.getElementById('request_plot_type').value;
   const request_plot_number = document.querySelector('.request_plot_number').value || "First available";
+  const has_plots_value = document.getElementById('has_plots').checked;
+  const has_plots = has_plots_value ? true : false;
 
   const requestData = {
     email,
     request_plot: true,
     request_plot_type,
-    request_plot_number
+    request_plot_number,
+    has_plots
   };
 
   fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {
@@ -267,6 +275,7 @@ function cancel_plot_request() {
     request_plot_type: " ",
     request_plot_number: " ",
     request_plot_date: " ",
+    cancel_request: true
   };
 
   fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {

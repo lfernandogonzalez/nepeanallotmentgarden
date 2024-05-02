@@ -11,7 +11,8 @@ function get_waiting_list() {
             
             if (element['request_plot']) {
                 console.log(element['email']);
-                const {email, first_name, last_name, street_address, postal_code, phone_number, request_plot_type, request_plot_number, request_plot_date} = element;
+                
+                const {email, first_name, last_name, street_address, postal_code, phone_number, request_plot_type, request_plot_number, request_plot_date, has_plots, waiting_list_position } = element;
                 
                 const plotType = request_plot_type;
                 
@@ -24,7 +25,7 @@ function get_waiting_list() {
                 collapsedDiv.id = `collapsed_requested_plots_info_${index}`;
                 collapsedDiv.setAttribute('onclick', `expand_requested_plot_info(${index}, true,'${email}','${plotType}')`);  
                 collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
-                collapsedDiv.innerHTML = `<div style="align-self: center;" class="search_key_requested_plots">${email}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
+                collapsedDiv.innerHTML = `<div style="width:20px">${waiting_list_position}</div><div style="align-self: center;" class="search_key_requested_plots">${email}</div><div style="width:20px">${has_plots}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
 
                 const expandedDiv = document.createElement('div');
                 expandedDiv.className = 'expanded_requested_plots_info';
@@ -48,7 +49,7 @@ function get_waiting_list() {
                     <div id="assignable_plots_${index}">Loading...</div><div id="assign_plot_confirmation_${index}"></div>
                 `;
 
-                plotTypeElements[plotType].push({collapsedDiv, expandedDiv});
+                plotTypeElements[plotType].push({collapsedDiv, expandedDiv, waiting_list_position});
             }
         });
 
@@ -59,6 +60,9 @@ function get_waiting_list() {
             plotTypeHeading.textContent = plotType;
             allWaitingLists.appendChild(plotTypeHeading);
 
+            // Sort elements by waiting_list_position in ascending order
+            elements.sort((a, b) => a.waiting_list_position - b.waiting_list_position);
+
             elements.forEach(({collapsedDiv, expandedDiv}) => {
                 allWaitingLists.appendChild(collapsedDiv);
                 allWaitingLists.appendChild(expandedDiv);
@@ -66,6 +70,7 @@ function get_waiting_list() {
         });
     });
 }
+
 
 
 
@@ -178,7 +183,7 @@ async function assign_requested_plot(index, email,plot_type) {
 
 function assign_plot(plot_id,email,index)
 {
-    // assign plot
+    // assign plot. need plot type and position to renumber waiting list on members db with same type
     var today = new Date();
     var formattedDate = today.toISOString().split('T')[0];
 
