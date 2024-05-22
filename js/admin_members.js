@@ -12,7 +12,6 @@ function get_members() {
             const email = element['email'];
             const isAdmin = element['admin'];
             const admin_checkbox = isAdmin ? 'checked' : '';
-            const admin_message = isAdmin ? "<br><img src=img/icon-star.png width=15> Administrator" : '';
             const request_plot = element['request_plot'] ? `${element['request_plot_type']}, ${element['request_plot_number']}. ${element['request_plot_date']}` : 'None';
             const last_logged_in = element['last_logged_in'] ? new Date(element['last_logged_in']).toLocaleDateString("en-US", date_options) : '';
 
@@ -39,10 +38,11 @@ function get_members() {
                 <p><b>Name:</b> <span id="member_first_name_${index}">${element['first_name']}</span> <span id="member_last_name_${index}">${element['last_name']}</span></p>
                 <p><b>Address:</b> <span id="member_street_address_${index}">${element['street_address']}</span> <span id="member_postal_code_${index}"> ${element['postal_code']}</span></p>
                 <p><b>Phone number:</b> <span id="member_phone_number_${index}">${element['phone_number']}</span></p>
+                <p><input type="checkbox" ${admin_checkbox} disabled id="admin_checkbox_${index}"> Admin</p>
+                <p>
                 <p><b>Plots:</b><span id="member_plots_${index}">Loading...</span></p>
                 <p><b>Requested plots:</b> ${request_plot}</p>
                 <p><b>Last logged in:</b> ${last_logged_in}</p>
-                <p>${admin_message}</p>
                 <p>
                     <div id="edit_member_button_${index}"> <input type="button"  onclick='open_edit_member(${index},true)' value='Edit' ></div>
                     <div id="save_edit_member_button_${index}"  style="display:none"><input type="button"onclick='save_edit_member(${index},"${email}")' value='Save'></div>
@@ -100,6 +100,10 @@ function open_edit_member(index, open) {
         }
     });
 
+    document.getElementById('admin_checkbox_'+index).disabled=false;
+
+    console.log()
+
     buttons.forEach(button => {
         const buttonEl = document.getElementById(`${button}_${index}`);
         buttonEl.style.display = open ? (button === 'edit_member_button' ? 'none' : 'inline-block') : (button === 'edit_member_button' ? 'inline-block' : 'none');
@@ -116,7 +120,8 @@ function save_edit_member(index,email) {
         last_name: document.getElementById(`edit_member_last_name_${index}`).value,
         street_address: document.getElementById(`edit_member_street_address_${index}`).value,
         postal_code: document.getElementById(`edit_member_postal_code_${index}`).value,
-        phone_number: document.getElementById(`edit_member_phone_number_${index}`).value
+        phone_number: document.getElementById(`edit_member_phone_number_${index}`).value,
+        admin: document.getElementById(`admin_checkbox_${index}`).checked,
     };
 
     fetch('https://ixih1qmuzb.execute-api.us-east-1.amazonaws.com/prod', {
@@ -203,7 +208,7 @@ function get_member_plots(email,target) {
       .then(response => response.json())
       .then(response => {
         const member_plot_list = document.getElementById(target);
-          
+          console.log(response);
         if (response.length === 0) {
             member_plot_list.innerHTML = "None";
             console.log('Member has no plots');

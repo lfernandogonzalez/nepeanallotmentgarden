@@ -18,6 +18,46 @@ function open_admin_tab(evt, tabName) {
   }
   
 
+function get_user() {
+    console.log('Getting user');
+    var data = { UserPoolId: _config.cognito.userPoolId, ClientId: _config.cognito.clientId };
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+    var cognitoUser = userPool.getCurrentUser();
+  
+    if (cognitoUser != null) {
+      cognitoUser.getSession(function (err, session) {
+        if (err) { console.log(err); return; }
+        console.log('Session validity: ' + session.isValid());
+  
+        cognitoUser.getUserAttributes(function (err, result) {
+          if (err) { console.log(err); return; }
+  
+          email = result[2].getValue();
+          console.log("Logged in user:" + email);
+          get_user_info(email);
+        });
+      });
+    } else {
+      console.log("User is signed-out");
+    }
+  }
+  
+  async function get_user_info(email) {
+    const api_url = 'https://thv3sn3j63.execute-api.us-east-1.amazonaws.com/prod/get_naga_user_by_email?user_email=' + encodeURIComponent(email);
+    const api_response = await fetch(api_url);
+    const api_data = await api_response.json();
+    const userData = JSON.parse(api_data['body']);
+  
+    if(userData['admin']){  
+        console.log('Admin');
+        const temp_var = get_members(); 
+    } else {
+        console.log('Not admin');
+        alert('You are not an admin user therefore you cannot access this page');
+        window.location.href = "index.html";
+    }
+  }
+
 
 function search(tab) {
     var search_term, container, all_divs, search_key, i, txtValue;

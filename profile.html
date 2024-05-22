@@ -15,6 +15,14 @@
       get_user();
     }
   </script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <style>
+      #pdf-viewer {
+          width: 600px;
+          height: 400px;
+          border: 1px solid #000;
+      }
+  </style>
   
 </head>
 
@@ -23,11 +31,7 @@
   <!--Header -->
   <div class="header">
     <div class="header_logo"><a href="index.html"><img src="img/logo.png"></a></div>
-    <br><div class="header_title">Members only area</div>
-    <div class="header_social">
-      <a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" width="20" border="0"></a>
-      <a href="https://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" width="20" border="0"></a>
-    </div>
+    
   </div>
 
   
@@ -152,9 +156,45 @@
   <div class="right_panel">
     <!-- newsletter -->
     <div class="newsletter">
-      <p>Hello gardener! Welcome to your Members Area. Here, you can request garden plots, check out your assigned ones, tweak your profile, and grab some gardening tips and newsletters. Let's get growing!</p>
+      <h4>Social</h4>
+      <ul><a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" style="border:none; width:40px; padding:10px"></a>
+      <a href="https://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" style="border:none;width:40px; padding:10px"></a>
+    </ul>
+    
       <h4>Newsletter</h4>
-      <p><a href="">2024 Spring Newsletter</a></p>
+      
+    <div id="pdf-viewer"></div>
+    <script>
+        const url = 'files/2024 Spring Newsletter.pdf';
+
+        const loadingTask = pdfjsLib.getDocument(url);
+        loadingTask.promise.then(function(pdf) {
+            console.log('PDF loaded');
+
+            pdf.getPage(1).then(function(page) {
+                console.log('Page loaded');
+
+                const scale = 1.5;
+                const viewport = page.getViewport({scale: scale});
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                document.getElementById('pdf-viewer').appendChild(canvas);
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }, function(reason) {
+            console.error(reason);
+        });
+    </script>
+      <p><a href="files/2024 Spring Newsletter.pdf">2024 Spring Newsletter</a></p>
       <div class="newsletter_archive_button" onclick="open_newsletter_archive();"><p>Previous years</p></div>
       <div class="newsletter_archive" style="display:none">
         <ul>
