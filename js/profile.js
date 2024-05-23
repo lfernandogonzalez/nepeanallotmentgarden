@@ -151,16 +151,6 @@ function get_my_plots() {
         const occupant = element['occupant'] ? element['occupant']['S'].replace(/["']/g, "") : "";
         let payment = element['payment'] ? element['payment']['S'].replace(/["']/g, "") : "";
 
-        let paymentMessage = "";
-        if (payment === "Awaiting payment") {
-          const deadline = dateAssigned ? new Date(dateAssigned.getTime() + 30 * 24 * 60 * 60 * 1000) : null;
-          const daysRemaining = deadline ? Math.ceil((deadline.getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : null;
-          paymentMessage = `<font color="red">Awaiting payment.</font><br><br>You have until <b>${deadline.toLocaleDateString("en-US", date_options)}</b> to make a payment.<br>If a payment is not received in the next <b>${daysRemaining}</b> days the plot will be assigned to someone else.<br><br><input type="button" value="Make a payment" onclick="window.open('https://square.link/u/UyZb9hJo','_blank')" style="width:200px">`;
-        } else if (payment === "Payment overdue") {
-          paymentMessage = `<font color="red">Your payment is overdue</font><br><br>You've had this plot assigned to you for over 30 days, and we have not received payment.<br>This plot can be assigned to someone else in our waiting list, at any time and without notice. Please make a payment today to secure your plot for the season.<br><br><input type="button" value="Make a payment" onclick="window.open('https://square.link/u/UyZb9hJo','_blank')" style="width:200px">`;
-        } else if (payment === "Paid") {
-          paymentMessage = "Paid for the season";
-        }
 
         const option = document.createElement("option");
         option.text = "Yes - " + plotId;
@@ -176,7 +166,7 @@ function get_my_plots() {
           <br>Date assigned: ${dateAssigned ? dateAssigned.toLocaleDateString("en-US", date_options) : ""}
           <br>Period: May 1st, 2024 - October 31st, 2024
           <br>Rate: ${rate} (per year)
-          <br>Status: ${paymentMessage}
+          <br>Status: ${payment}
         `;
         myPlotsList.appendChild(tabContent);
 
@@ -198,7 +188,7 @@ async function get_requested_plots() {
 
     document.getElementById('requested_plot_type').innerText = JSON.parse(api_data['body'])['request_plot_type'];
     document.getElementById('requested_plot_number').innerText = JSON.parse(api_data['body'])['request_plot_number'];
-    document.getElementById('requested_date_joined').innerText = new Date(JSON.parse(api_data['body'])['request_plot_date']).toLocaleString();;
+    document.getElementById('requested_date_joined').innerText = new Date(JSON.parse(api_data['body'])['request_plot_date']).toLocaleDateString();;
     document.getElementById('requested_plot_position').innerText = JSON.parse(api_data['body'])['waiting_list_position'];
 
 

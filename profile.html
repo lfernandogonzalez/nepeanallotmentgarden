@@ -15,14 +15,7 @@
       get_user();
     }
   </script>  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-  <style>
-      #pdf-viewer {
-          width: 600px;
-          height: 400px;
-          border: 1px solid #000;
-      }
-  </style>
+  
   
 </head>
 
@@ -156,49 +149,18 @@
   <div class="right_panel">
     <!-- newsletter -->
     <div class="newsletter">
-      <h4>Social</h4>
-      <ul><a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" style="border:none; width:40px; padding:10px"></a>
+      <h4>Connect with us</h4>
+      <a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" style="border:none; width:40px; padding:10px"></a>
       <a href="https://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" style="border:none;width:40px; padding:10px"></a>
-    </ul>
     
+    a
       <h4>Newsletter</h4>
       
-    <div id="pdf-viewer"></div>
-    <script>
-        const url = 'files/2024 Spring Newsletter.pdf';
-
-        const loadingTask = pdfjsLib.getDocument(url);
-        loadingTask.promise.then(function(pdf) {
-            console.log('PDF loaded');
-
-            pdf.getPage(1).then(function(page) {
-                console.log('Page loaded');
-
-                const scale = 1.5;
-                const viewport = page.getViewport({scale: scale});
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                document.getElementById('pdf-viewer').appendChild(canvas);
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                page.render(renderContext);
-            });
-        }, function(reason) {
-            console.error(reason);
-        });
-    </script>
       <p><a href="files/2024 Spring Newsletter.pdf">2024 Spring Newsletter</a></p>
       <div class="newsletter_archive_button" onclick="open_newsletter_archive();"><p>Previous years</p></div>
       <div class="newsletter_archive" style="display:none">
         <ul>
-            <li><a href="files/Newsletters/NAGA2019SpringNewsletter2.pdf">NAGA 2019 Spring Newsletter</a></li>
+            <li><a href="files/Newsletters/NAGA2019SpringNewsletter2.pdf">2019</a></li>
             <li><a href="files/NAGA2018SpringNewsletterx.pdf">2018</a></li>
             <li><a href="files/2017.NAGA.Newsletter.pdf">2017</a></li>
             <li><a href="files/NAGA%20Newsletter_June.24.2016.pdf" target="_blank">2016</a></li>
