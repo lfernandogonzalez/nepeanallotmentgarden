@@ -39,7 +39,7 @@ async function get_user_info(email) {
   const member_admin = userData['admin'];
   if (member_admin) {
     document.getElementById('member_admin').value = member_admin;
-    document.getElementById('admin_access').style.display = "block";
+    document.getElementById('admin_access').style.display = "inline";
   }
 
   const fields = ['first_name', 'last_name', 'street_address', 'postal_code', 'phone_number'];
@@ -131,7 +131,7 @@ function get_my_plots() {
     .then(response => response.json())
     .then(response => {
       const myPlotsList = document.querySelector('.my_plots');
-      myPlotsList.innerHTML = '<h4>My plots</h4>';
+      myPlotsList.innerHTML = '';
 
       if (response.length === 0) {
         myPlotsList.innerHTML = "<p>You have no garden plots assigned to you at the moment.</p>";
@@ -150,7 +150,7 @@ function get_my_plots() {
         const rate = element['rate'] ? "$" + element['rate']['S'].replace(/["']/g, "") : "";
         const occupant = element['occupant'] ? element['occupant']['S'].replace(/["']/g, "") : "";
         let payment = element['payment'] ? element['payment']['S'].replace(/["']/g, "") : "";
-
+        const imageName = plotType.toLowerCase().replace(/\s+/g, '_')
 
         const option = document.createElement("option");
         option.text = "Yes - " + plotId;
@@ -160,13 +160,20 @@ function get_my_plots() {
         const tabContent = document.createElement("div");
         tabContent.setAttribute('id', "plot_tab_" + plotId);
         tabContent.innerHTML = `
-          <b>Plot Id: ${plotId}</b>
-          <br>Plot Type: ${plotType}
-          <br>Size: ${width}x ${height} feet
-          <br>Date assigned: ${dateAssigned ? dateAssigned.toLocaleDateString("en-US", date_options) : ""}
-          <br>Period: May 1st, 2024 - October 31st, 2024
-          <br>Rate: ${rate} (per year)
-          <br>Status: ${payment}
+          <div style="display: flex; align-items: center; border:none">
+            <div style="border:none; text-align:center">
+            <img src="img/icon_${imageName}.png" alt="Plot Image" style="width: 100px; ">
+            <br>Plot # ${plotId}<br>
+            ${plotType}
+            </div>
+            <div style="border:none">
+              <br>Size: ${width}x ${height} feet
+              <br>Date assigned: ${dateAssigned ? dateAssigned.toLocaleDateString("en-US", date_options) : ""}
+              <br>Period: May 1st, 2024 - October 31st, 2024
+              <br>Rate: ${rate} (per year)
+              <br>Status: ${payment}
+            </div>
+          </div>
         `;
         myPlotsList.appendChild(tabContent);
 
