@@ -81,7 +81,7 @@
 }
 
 .welcome {
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 
@@ -113,13 +113,13 @@ h2 {
   }
 
 .explore {
-    margin-top: 40px;
+    margin-top: 20px;
 
 }
 
 
 .partners{
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .partners img{
@@ -127,12 +127,12 @@ h2 {
 }
 
 .board {
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 
 .contact{
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 .footer {
@@ -145,7 +145,62 @@ h2 {
 
 
 
+.main_menu {
+    text-align:center;
+  }
+  
+  .main_menu img {
+    border-radius: 50%;
+    height:200px;
+  }
+  
+  .main_menu div {
+    display:inline-block;
+    margin:10px;
+    padding:15px;
+    border-radius: 10%;
+    cursor: pointer;
+  }
+  
+  .main_menu div:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  
+  .main_menu p {
+    font-size: 18pt;
+    margin-bottom:0;
+    margin-top:10px;
+    font-weight: bolder;
+  }
+  
 
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    padding: 10px;
+    background-color: rgb(223, 223, 223);
+    z-index: 1000;
+    width: 90%;
+    border-radius: 2%;
+    display: none;
+  }
+  
+  .modal-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .close-button {
+    background-color: tomato;
+    border-radius: 30%;
+    margin-left: 10px;
+  }  
   
   
 /* For medium mobile: */
@@ -176,6 +231,7 @@ h2 {
     h1 {
         font-size: 24pt;
     }
+    
     
     .hero {
         width:60%;

@@ -69,7 +69,17 @@ function open_sign_up() {
   window.open('https://naga.auth.us-east-1.amazoncognito.com/signup?client_id=6mkmj7cfc7vd5g04cgm6lrm6ql&response_type=code&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https%3A%2F%2Fwww.nepeanallotmentgarden.com%2Fverify.html','_blank'); 
 
 }
-
+function toggleModal(modalClass, open) {
+  const modal = document.querySelector(`.${modalClass}`);
+  const overlay = document.querySelector('.overlay');
+  
+  if (modal && overlay) {
+    overlay.style.display = open ? "block" : "none";
+    modal.style.display = open ? "block" : "none";
+  } else {
+    console.error(`Modal or overlay not found. Modal class: ${modalClass}`);
+  }
+}
 
 function close_sign_up() {
   document.querySelector('.sign_up').style.display = "none";

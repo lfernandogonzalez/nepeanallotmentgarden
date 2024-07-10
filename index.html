@@ -24,12 +24,12 @@
     </div>
 
     <!-- Hero -->
-    <div class="hero"><img src="img/hero.jpg"></div>
+    <div class="hero" ><img src="img/hero.jpg"></div>
 
-    
     <!-- Auth  -->
     <div class="auth">
       <div class="loader" ><img src="img/loader.gif"></div>
+      <script> window.onload = function(){ const temp_var = get_user();}</script>
 
       <!-- Sign in -->
       <div class="sign_in" style="display:none;">
@@ -112,14 +112,14 @@
         <li>Locker: $5</li>
       </ul>
          
-      <p>We offer free compost to our gardneres, provided by the City of Ottawa. Annual plots are rototilled every spring. Perennials are only available to active NAGA members and they are entirely maintained by the gardener renting them. Seniors (65+) get $5 off on all plots. Rates are per plot per year. </p>
+      <p>We offer free compost to our gardeners, provided by the City of Ottawa. Annual plots are rototilled every spring. Perennials are only available to active NAGA members and they are entirely maintained by the gardener renting them. Seniors (65+) get $5 off on all plots. Rates are per plot per year. </p>
       
     </div>
 
     <!-- Explore -->
     <div class="explore">
       <h2>Explore the garden</h2>
-      <span>We are located at 239 Viewmount Drive in Ottawa, Ontario, Canada. When visiting, please be respectful of our gardeners by not touching any of the plants and picking up after your dog.</span>
+      <span>We are located at 239 Viewmount Drive in Ottawa, Ontario, Canada. When visiting, please be respectful of our gardeners by not touching any of the plants.</span>
       
 
       <br><br><br>
@@ -132,8 +132,24 @@
       
     </div>
 
-  
-     
+<!-- Main Menu -->
+<div class="main_menu">
+  <div onclick="toggleModal('newsletter', true);">
+    <img src="img/icon-newsletter.png">
+    <p>Newsletter</p>
+  </div>
+
+  <div onclick="toggleModal('resources', true);">
+    <img src="img/icon-resources.png" />
+    <p>Resources</p>
+  </div>
+
+  <div onclick="toggleModal('media', true);">
+    <img src="img/icon-media.jpeg" />
+    <p>Media</p>
+  </div>
+</div>
+
     <div class="partners">
       <h3>Our partners</h3>
       <div>
@@ -149,6 +165,8 @@
       </div>
     
     </div>
+
+     
         
     
     <div class="board">
@@ -190,11 +208,96 @@
     
 
 
+  <!-- Overlay -->
+  <div id="overlay" class="overlay"></div>
+
+  <div class="modal newsletter">
+    <div class="modal-header">
+      <h4>Newsletter</h4>
+      <input type="button" onclick="toggleModal('newsletter', false);" value="X" class="close-button">
+    </div>
+
+    <ul>
+      <li><a href="files/2024 Spring Newsletter.pdf">2024 Spring Newsletter</a></li>
+      <li><a href="files/Newsletters/NAGA2019SpringNewsletter2.pdf">2019</a></li>
+      <li><a href="files/NAGA2018SpringNewsletterx.pdf">2018</a></li>
+      <li><a href="files/2017.NAGA.Newsletter.pdf">2017</a></li>
+      <li><a href="files/NAGA%20Newsletter_June.24.2016.pdf" target="_blank">2016</a></li>
+      <li><a href="files/2015%20Newsletter%20copy.pdf" target="_blank">2015</a></li>
+      <li><a href="files/Newsletter%20Spring%202014%20.pdf" target="_blank">2014</a></li>
+      <li><a href="files/2013%20Newsletter.pdf" target="_blank">2013</a></li>
+      <li><a href="files/2012%20Newsletter.pdf" target="_blank">2012</a></li>
+      <li><a href="files/2011%20Newsletter.pdf" target="_blank">2011</a></li>
+      <li><a href="files/2010%20Newsletter.pdf" target="_blank">2010</a></li>
+      <li><a href="files/2009%20Newsletter.pdf" target="_blank">2009</a></li>
+      <li><a href="files/2008%20Spring%20Newsletter.pdf" target="_blank">2008 Spring</a></li>
+      <li><a href="files/2006%20Fall%20Newsletter.pdf" target="_blank">2006 Fall</a></li>
+      <li><a href="files/2006%20Spring%20Newsletter.pdf" target="_blank">2006 Spring</a></li>
+      <li><a href="files/2005%20Spring%20Newsletter.pdf" target="_blank">2005 Spring</a></li>
+      <li><a href="files/2004%20Fall%20Newsletter.pdf" target="_blank">2004 Fall</a></li>
+      <li><a href="files/2004%20Spring%20Newsletter.pdf" target="_blank">2004 Spring</a></li>
+      <li><a href="files/2003%20Spring%20Newsletter.pdf" target="_blank">2003 Spring</a></li>
+      <li><a href="files/2002%20Spring%20Newsletter.pdf" target="_blank">2002 Spring</a></li>
+      <li><a href="files/1998%20Spring%20Newsletter.pdf" target="_blank">1998 Spring</a></li>
+      <li><a href="files/1997%20Fall%20Newsletter.pdf" target="_blank">1997 Fall</a></li>
+      <li><a href="files/1997%20Spring%20Newsletter.pdf" target="_blank">1997 Spring</a></li>
+      <li><a href="files/1996%20Fall%20Newsletter.pdf" target="_blank">1996 Fall</a></li>
+      <li><a href="files/1996%20Spring%20Newsletter.pdf" target="_blank">1996 Spring</a></li>
+      <li><a href="files/1995%20Fall%20Newsletter.pdf" target="_blank">1995 Fall</a></li>
+      <li><a href="files/1995%20Spring%20Newsletter.pdf" target="_blank">1995 Spring</a></li>
+      <li><a href="files/1994%20Fall%20Newsletter.pdf" target="_blank">1994 Fall</a></li>
+      <li><a href="files/1994%20Spring%20Newsletter.pdf" target="_blank">1994 Spring</a></li>
+      <li><a href="files/1993%20Newsletter.pdf" target="_blank">1993</a></li>
+      <li><a href="files/1992%20Newsletter.pdf" target="_blank">1992</a></li>
+    </ul>
+  </div>
+
+  <div class="modal resources">
+    <div class="modal-header">
+      <h4>Resources</h4>
+      <input type="button" onclick="toggleModal('resources', false);" value="X" class="close-button">
+    </div>
+    <ul>
+      <li><a href="http://mgottawa.mgoi.ca/" target="_blank">Master Gardeners of Ottawa-Carleton</a></li>
+      <li><a href="http://www.gardenontario.org/site.php/nepean" target="_blank">Nepean Horticultural Society</a></li>
+      <li><a href="files/Gardening_Calendar.pdf">Gardening Calendar</a></li>
+      <li><a href="http://nepeanallotmentgarden.yolasite.com/resources/Sweetpotato_2007.pdf">My Second Year Growing Organic Sweet potatoes</a>, by Ian A. Reid (PDF size 3Mb).</li>
+      <li><a href="http://nepeanallotmentgarden.yolasite.com/resources/CGN_Garden_Guide_2010_English.pdf">The Community Gardening Network Garden Guide</a></li>
+      <li><a href="http://nepeanallotmentgarden.yolasite.com/resources/Unwanted Garden Weeds List.pdf">Nepean Allotment Garden Association's Unwanted Weeds List</a> </li>
+      <li><a href="http://www.mastergardeners.org/picks/tomato_staking.html" target="_blank">Tomato Staking Compendium</a></li>
+      <li><a href="http://www.growarow.org/">Grow A Row</a> - Growing food to help those in need</li>
+      
+      
+      <li><a href="http://www.omafra.gov.on.ca/english/crops/facts/ontweeds/weedgal.htm" target="_blank">Ontario  Weed Gallery</a></li>
+      <li><a href="http://www.guelphlabservices.com/files/PDC/034SlugSnail.pdf" target="_blank">Slugs and Snails</a></li>
+      <li><a href="https://www.avasflowers.net/how-to-start-a-flower-garden" target="_blank">How to Start a Flower Garden</a> (Thanks to Ashley from Ms. Roberts' 5th grade class for this link!)</li>
+      <li><a href="https://couponfollow.com/research/home-gardening-ideas">Home Gardening Ideas and Projects on a Budget</a> (Thanks Anna from Ms. McMillan class!)</li>
+    </ul>
+  </div>
+
+  <div class="modal media">
+    <div class="modal-header">
+      <h4>Media</h4>
+      <input type="button" onclick="toggleModal('media', false);" value="X" class="close-button">
+    </div>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=r-xEzZyAbiE&list=PLd0CXLUMn4-HKdlGsyl5bB9_ICppR4E4Y" target="_blank">The Power of Giving</a> - A video of our garden from 2010.</li>
+      <li><a href="https://www.youtube.com/user/GrowVeg" target="_blank">Growing Vegetables Youtube Channel</a></li>
+      <li><a href="http://www.youtube.com/watch?v=37q4YsrjpPk" target="_blank">Vegetable gardening: Companion plants</a></li>
+      <li><a href="http://www.youtube.com/watch?v=mKO01YftDSo" target="_blank">Organic Gardening - Top Ten Tips / How to grow vegetables</a></li>
+      <li><a href="http://www.youtube.com/watch?v=F1SQNZtMYak&amp;list=PLA546183027CCE1F2%20" target="_blank">Tomato Diseases</a></li>
+      <li><a href="http://www.youtube.com/watch?v=vkwiRw_5vyo" target="_blank">Non-toxic Weed Control</a></li>
+      <li><a href="http://www.youtube.com/watch?v=N2Xmpp0n4HQ" target="_blank">Ask The Farmer: How Do I Control Weeds in an Organic Garden?</a></li>
+      <li><a href="http://www.youtube.com/user/UIExtension" target="_blank">Gardener's Corner</a></li>
+    
+      
+      
+    </ul>
+  </div>
+
   </body>
 
-  <script>
-    window.onload = function(){ const temp_var = get_user();}
-  </script>
+  
 </html>
 
 
