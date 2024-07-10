@@ -271,3 +271,28 @@ function delay(milliseconds){
         setTimeout(resolve, milliseconds);
     });
 }
+
+
+
+
+function download_members() {
+
+    const api_url = 'https://90oukjmsob.execute-api.us-east-1.amazonaws.com/prod/get_my_plots?email=' + encodeURIComponent(email);
+    
+    fetch(api_url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        
+        console.log(response);
+        
+      });
+  
+}
+
+

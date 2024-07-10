@@ -21,20 +21,24 @@
 
 <body>
   
-  <!--Header -->
-  <div class="header">
-    <div class="header_logo"><a href="index.html"><img src="img/logo.png"></a></div>
-    
-  </div>
+    <!--Header -->
+    <div class="header">
+      <div class="header_logo"><a href="index.html"><img src="img/logo.png"></a></div>
+      <div class="header_title">Nepean Allotment<br> Garden Association</div>
+      <div class="header_social">
+        <a href="http://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" width="20" border="0"></a>
+        <a href="http://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" width="20" border="0"></a>
+      </div>
+    </div>
+
 
   
-  <div class="left_panel">
     <!-- Loader -->  
     <div id="loader" style="display:none; width:auto; text-align:center;"><img src="img/loader.gif" width="30"></div>
     
     <!-- Profile -->
     <div class="my_account">
-      <h1>Welcome</h1>
+      <h1>Member's area</h1>
       
       <p><span id="member_email"></span></p>
 
@@ -94,25 +98,24 @@
           <br><b>Date joined:</b> <span id="requested_date_joined"></span> 
           <br><b>Position:</b> <span id="requested_plot_position"></span> 
         </div>
+        
       </div>
+      <input type="button" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
+      <input type="button" class="cancel_plot_request_button" value="Cancel request" onclick="cancel_plot_request()">
 
       
 
-      <p></p>
-
+      
       
       </div>
       
-
-      <h4>Actions</h4>
       <div class="user_action_buttons">
         <input type="button" class="edit_profile_button" onclick="open_edit_profile(true);" value="Edit Profile"> 
-        <input type="button" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
+        
         <div id="admin_access" style="display:none">
           <input type="hidden" id="member_admin">
           <input type="button" onclick="window.location.href='./admin.html'" value="Admin Console">
         </div>
-        <input type="button" class="cancel_plot_request_button" value="Cancel plot request" onclick="cancel_plot_request()">
         <input type="button" onclick="sign_out();" value="Sign out">
       </div>
 
@@ -144,100 +147,7 @@
       
     </div>
 
-  </div>  
-
-  <div class="right_panel">
-    <!-- newsletter -->
-    <div class="newsletter">
-      <h4>Connect with us</h4>
-      <a href="https://www.facebook.com/groups/261282425387342" target="_blank"><img src="img/facebook.png" style="border:none; width:40px; padding:10px"></a>
-      <a href="https://www.instagram.com/nepean_allotment_gardens/" target="_blank"><img src="img/Instagram.png" style="border:none;width:40px; padding:10px"></a>
-    
-    a
-      <h4>Newsletter</h4>
-      
-      <p><a href="files/2024 Spring Newsletter.pdf">2024 Spring Newsletter</a></p>
-      <div class="newsletter_archive_button" onclick="open_newsletter_archive();"><p>Previous years</p></div>
-      <div class="newsletter_archive" style="display:none">
-        <ul>
-            <li><a href="files/Newsletters/NAGA2019SpringNewsletter2.pdf">2019</a></li>
-            <li><a href="files/NAGA2018SpringNewsletterx.pdf">2018</a></li>
-            <li><a href="files/2017.NAGA.Newsletter.pdf">2017</a></li>
-            <li><a href="files/NAGA%20Newsletter_June.24.2016.pdf" target="_blank">2016</a></li>
-            <li><a href="files/2015%20Newsletter%20copy.pdf" target="_blank">2015</a></li>
-            <li><a href="files/Newsletter%20Spring%202014%20.pdf" target="_blank">2014</a></li>
-            <li><a href="files/2013%20Newsletter.pdf" target="_blank">2013</a></li>
-            <li><a href="files/2012%20Newsletter.pdf" target="_blank">2012</a></li>
-            <li><a href="files/2011%20Newsletter.pdf" target="_blank">2011</a></li>
-            <li><a href="files/2010%20Newsletter.pdf" target="_blank">2010</a></li>
-            <li><a href="files/2009%20Newsletter.pdf" target="_blank">2009</a></li>
-            <li><a href="files/2008%20Spring%20Newsletter.pdf" target="_blank">2008 Spring</a></li>
-            <li><a href="files/2006%20Fall%20Newsletter.pdf" target="_blank">2006 Fall</a></li>
-            <li><a href="files/2006%20Spring%20Newsletter.pdf" target="_blank">2006 Spring</a></li>
-            <li><a href="files/2005%20Spring%20Newsletter.pdf" target="_blank">2005 Spring</a></li>
-            <li><a href="files/2004%20Fall%20Newsletter.pdf" target="_blank">2004 Fall</a></li>
-            <li><a href="files/2004%20Spring%20Newsletter.pdf" target="_blank">2004 Spring</a></li>
-            <li><a href="files/2003%20Spring%20Newsletter.pdf" target="_blank">2003 Spring</a></li>
-            <li><a href="files/2002%20Spring%20Newsletter.pdf" target="_blank">2002 Spring</a></li>
-            <li><a href="files/1998%20Spring%20Newsletter.pdf" target="_blank">1998 Spring</a></li>
-            <li><a href="files/1997%20Fall%20Newsletter.pdf" target="_blank">1997 Fall</a></li>
-            <li><a href="files/1997%20Spring%20Newsletter.pdf" target="_blank">1997 Spring</a></li>
-            <li><a href="files/1996%20Fall%20Newsletter.pdf" target="_blank">1996 Fall</a></li>
-            <li><a href="files/1996%20Spring%20Newsletter.pdf" target="_blank">1996 Spring</a></li>
-            <li><a href="files/1995%20Fall%20Newsletter.pdf" target="_blank">1995 Fall</a></li>
-            <li><a href="files/1995%20Spring%20Newsletter.pdf" target="_blank">1995 Spring</a></li>
-            <li><a href="files/1994%20Fall%20Newsletter.pdf" target="_blank">1994 Fall</a></li>
-            <li><a href="files/1994%20Spring%20Newsletter.pdf" target="_blank">1994 Spring</a></li>
-            <li><a href="files/1993%20Newsletter.pdf" target="_blank">1993</a></li>
-            <li><a href="files/1992%20Newsletter.pdf" target="_blank">1992</a></li>
-        </ul>
-      
-      </div>
-      <br>
-    </div>
-
-    <!-- links  -->
-    <div class="links">
-      
-  <h4>Tips and links</h4>
-  <ul>
-    <li><a href="files/Gardening_Calendar.pdf">Gardening_Calendar</a></li>
-    <li><a href="http://nepeanallotmentgarden.yolasite.com/resources/Sweetpotato_2007.pdf">My Second Year Growing Organic Sweet potatoes</a>, by Ian A. Reid (PDF size 3Mb).</li>
-    <li><a href="http://nepeanallotmentgarden.yolasite.com/resources/CGN_Garden_Guide_2010_English.pdf">Garden Guide</a> The Community Gardening Network Garden Guide, by Just Foods Ottawa; excellent resource.</li>
-    <li><a href="http://nepeanallotmentgarden.yolasite.com/resources/Unwanted Garden Weeds List.pdf">Nepean Allotment Garden Association's Unwanted Weeds List</a> A list of all the weeds that need to be removed from the gardens as soon as they appear.</li>
-    <li><a href="http://www.georgebushell.com/6301.html" target="_blank">George Bushell's gardening and yard care slides</a> George Bushell is the president of the Gloucester community garden. He puts on presentations on garden and yard care including pest control and seed starting.</li>
-    <li><a href="http://www.mastergardeners.org/picks/tomato_staking.html" target="_blank">Tomato Staking Compendium</a> A review of many different tomato staking methods. Choose the one that works for you.</li>
-    <li><a href="http://www.youtube.com/watch?v=37q4YsrjpPk" target="_blank">Vegetable gardening: Companion plants</a> (video)</li>
-    <li><a href="http://www.youtube.com/watch?v=mKO01YftDSo" target="_blank">Organic Gardening - Top Ten Tips / How to grow vegetables</a> (video)</li>
-    <li><a href="http://www.youtube.com/watch?v=F1SQNZtMYak&amp;list=PLA546183027CCE1F2%20" target="_blank">Tomato Diseases</a> (video)</li>
-    <li><a href="http://www.youtube.com/watch?v=vkwiRw_5vyo" target="_blank">Non-toxic Weed Control</a> (video)</li>
-    <li><a href="http://www.youtube.com/watch?v=N2Xmpp0n4HQ" target="_blank">Ask The Farmer: How Do I Control Weeds in an Organic Garden?</a> (video)</li>
-    <li><a href="https://www.youtube.com/user/GrowVeg" target="_blank">Growing Vegetables</a> (videos)</li>
-    <li><a href="http://www.growarow.org/">http://www.growarow.org/</a> - Growing food to help those in need</li>
-    <li><a href="http://www.youtube.com/user/UIExtension" target="_blank">Gardener's Corner</a> - Vegetable gardening tips</li>
-    <li><a href="http://www.justfood.ca/" target="_blank">Just food Ottawa</a></li>
-    <li><a href="http://mgottawa.mgoi.ca/" target="_blank">Master Gardeners of Ottawa-Carleton</a></li>
-    <li><a href="http://www.gardenontario.org/site.php/nepean" target="_blank">Nepean Horticultural Society</a></li>
-    <li><a href="http://www.omafra.gov.on.ca/english/crops/facts/ontweeds/weedgal.htm" target="_blank">Ontario Weeds - Weed Gallery</a></li>
-    <li><a href="http://www.guelphlabservices.com/files/PDC/034SlugSnail.pdf" target="_blank">Slugs and Snails</a></li>
-    <li><a href="http://justfood.ca/" target="_blank">Just Food</a>: Working for a Sustainable and Just Food System in Ottawa</li>
-    <li><a href="https://www.avasflowers.net/how-to-start-a-flower-garden" target="_blank">How to Start a Flower Garden</a> (Thanks to Ashley from Ms. Roberts' 5th grade class for this link!)</li>
-    <li><a href="https://couponfollow.com/research/home-gardening-ideas">Home Gardening Ideas and Projects on a Budget</a> (Thanks Anna from Ms. McMillan class!)</li>
-
   
-  </ul>
-  <br>
-    
-  <h4>NAGA in the news</h4>
-  <ul>
-    <li><a href="#">The Power of Giving</a> - A video of our garden from 2010.</li>
-    <li><a href="#">Gardener rescues 24 shrubs, tree from almost certain death</a>, Nepean This Week, 2002.</li>
-  </ul>
-
-    </div>
-</div>
-
-
 
 
 <!-- Overlay -->

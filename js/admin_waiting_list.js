@@ -6,6 +6,7 @@ function get_waiting_list() {
     .then(response => {
         
         const plotTypeElements = {};
+        console.log(response)
 
         response.forEach((element, index) => {
             
@@ -25,7 +26,7 @@ function get_waiting_list() {
                 collapsedDiv.id = `collapsed_requested_plots_info_${index}`;
                 collapsedDiv.setAttribute('onclick', `expand_requested_plot_info(${index}, true,'${email}','${plotType}')`);  
                 collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
-                collapsedDiv.innerHTML = `<div style="width:20px">${waiting_list_position}</div><div style="align-self: center;" class="search_key_requested_plots">${email}</div><div style="width:20px">${has_plots}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
+                collapsedDiv.innerHTML = `<div style="width:100px">${request_plot_date}</div><div style="align-self: center;" class="search_key_requested_plots">${email}</div><div style="width:20px">${has_plots}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
 
                 const expandedDiv = document.createElement('div');
                 expandedDiv.className = 'expanded_requested_plots_info';

@@ -35,7 +35,8 @@ input[type=button] {
     display:none; 
 }
 .cancel_plot_request_button {
-    display:none
+    display:none;
+    width:200;
 }
 .my_plots {
     width:100%;
@@ -65,7 +66,6 @@ input[type=button] {
 }
 
 input[type="button"][value="Cancel"],
-input[type="button"][value="Cancel plot request"],
 input[type="button"][value="Sign out"] {
     background-color: tomato;
 }

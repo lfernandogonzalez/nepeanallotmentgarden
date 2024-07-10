@@ -151,7 +151,7 @@ h2 {
   
   .main_menu img {
     border-radius: 50%;
-    height:200px;
+    height:120px;
   }
   
   .main_menu div {
@@ -168,7 +168,7 @@ h2 {
   
   
   .main_menu p {
-    font-size: 18pt;
+    font-size: 14pt;
     margin-bottom:0;
     margin-top:10px;
     font-weight: bolder;

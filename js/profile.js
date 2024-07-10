@@ -131,7 +131,7 @@ function get_my_plots() {
     .then(response => response.json())
     .then(response => {
       const myPlotsList = document.querySelector('.my_plots');
-      myPlotsList.innerHTML = '';
+      myPlotsList.innerHTML = '<h4>Your garden plots</h4>';
 
       if (response.length === 0) {
         myPlotsList.innerHTML = "<p>You have no garden plots assigned to you at the moment.</p>";
