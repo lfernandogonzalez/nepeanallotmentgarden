@@ -1,6 +1,6 @@
 function get_waiting_list() {
     document.getElementById('all_waiting_lists').innerHTML="";
-    const url = 'https://g1t81zygbh.execute-api.us-east-1.amazonaws.com/prod/get_naga_members';
+    const url = 'https://omwtz3crjb.execute-api.us-east-1.amazonaws.com/prod/';
     fetch(url, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
     .then(response => response.json())
     .then(response => {
@@ -10,23 +10,23 @@ function get_waiting_list() {
 
         response.forEach((element, index) => {
             
-            if (element['request_plot']) {
-                console.log(element['email']);
+            if (element['request_plot_date']) {
                 
                 const {email, first_name, last_name, street_address, postal_code, phone_number, request_plot_type, request_plot_number, request_plot_date, has_plots, waiting_list_position } = element;
-                
                 const plotType = request_plot_type;
                 
                 if (!plotTypeElements[plotType]) {
                     plotTypeElements[plotType] = [];
                 }
 
+                if(has_plots) { has_plots_message="Active member"} else {has_plots_message=""}
+
                 const collapsedDiv = document.createElement('div');
                 collapsedDiv.className = 'collapsed_requested_plots_info';
                 collapsedDiv.id = `collapsed_requested_plots_info_${index}`;
                 collapsedDiv.setAttribute('onclick', `expand_requested_plot_info(${index}, true,'${email}','${plotType}')`);  
                 collapsedDiv.style.cssText = 'width: auto; cursor: pointer; display: flex; justify-content: space-between;';
-                collapsedDiv.innerHTML = `<div style="width:100px">${request_plot_date}</div><div style="align-self: center;" class="search_key_requested_plots">${email}</div><div style="width:20px">${has_plots}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
+                collapsedDiv.innerHTML = `<div style="width:100px"> ${request_plot_date}</div><div style="align-self: center;" class="search_key_requested_plots">${email}</div><div style="width:20px">${has_plots_message}</div><img src="img/icon-down.png"  style="width: 20px; align-self: center;">`;
 
                 const expandedDiv = document.createElement('div');
                 expandedDiv.className = 'expanded_requested_plots_info';

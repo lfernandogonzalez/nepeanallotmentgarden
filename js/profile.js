@@ -196,8 +196,7 @@ async function get_requested_plots() {
     document.getElementById('requested_plot_type').innerText = JSON.parse(api_data['body'])['request_plot_type'];
     document.getElementById('requested_plot_number').innerText = JSON.parse(api_data['body'])['request_plot_number'];
     document.getElementById('requested_date_joined').innerText = new Date(JSON.parse(api_data['body'])['request_plot_date']).toLocaleDateString();;
-    document.getElementById('requested_plot_position').innerText = JSON.parse(api_data['body'])['waiting_list_position'];
-
+    
 
     document.querySelector('.request_plot_button').style.display = 'none';
     document.querySelector('.cancel_plot_request_button').style.display = 'block';

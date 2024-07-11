@@ -73,6 +73,28 @@
                 <br><input  id="admin_input_phone_number" type="text" Placeholder="Phone number" >
             </p>
             
+            <p>  
+                <input type="checkbox" id="admin_input_request_plot" onclick="request_plot_checkbox(this.checked)"><b>Add to waiting list:</b>
+                <div id="admin_request_plot_container" style="display: none;">
+                    <select id="admin_input_request_plot_type" style="width: 50%; box-sizing: border-box;height:50px; ">
+                        <option value="Annuals">Annual</option>
+                        <option value="Perennials">Perennial</option>
+                        <option value="Raised beds">Raised bed</option>
+                        <option value="Lockers">Locker</option>
+                    </select>
+                    
+                    <input type="text" id="admin_input_request_plot_date" style="width: 50%; height:50px; box-sizing: border-box;" value="">
+                    
+                    <script>
+                        const date = new Date().toISOString().split('T')[0];
+                        document.getElementById('admin_input_request_plot_date').value = date;
+                    </script>
+                    
+                    <input type="hidden" id="admin_input_request_plot_number" value="First available">
+                </div>
+                  
+            </p>
+
             <input type="button" onclick="add_member();" value="Add member">
             <input type="button" onclick="open_add_member(false);" style="background-color: tomato" value="Cancel">
 
@@ -181,9 +203,6 @@
                 <input type="text" id="search_waiting_lists" onkeyup="search('waiting_lists')" placeholder="Search by email">
                 </div>
 
-                <div class="in_line" style="vertical-align: bottom;">
-                <input type="button" value="Add to waiting list" style="width:150px" onclick="open_add_waiting_list()">
-                </div>
                 
                 
 

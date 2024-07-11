@@ -12,7 +12,6 @@ function get_members() {
             const email = element['email'];
             const isAdmin = element['admin'];
             const admin_checkbox = isAdmin ? 'checked' : '';
-            const request_plot = element['request_plot'] ? `${element['request_plot_type']}, ${element['request_plot_number']}. ${element['request_plot_date']}` : 'None';
             const last_logged_in = element['last_logged_in'] ? new Date(element['last_logged_in']).toLocaleDateString("en-US", date_options) : '';
 
             const collapsedDiv = document.createElement('div');
@@ -40,8 +39,12 @@ function get_members() {
                 <p><b>Phone number:</b> <span id="member_phone_number_${index}">${element['phone_number']}</span></p>
                 <p><input type="checkbox" ${admin_checkbox} disabled id="admin_checkbox_${index}"> Admin</p>
                 <p>
-                <p><b>Plots:</b><span id="member_plots_${index}">Loading...</span></p>
-                <p><b>Requested plots:</b> ${request_plot}</p>
+                <p><b>Assigned plots:</b><span id="member_plots_${index}">Loading...</span></p>
+                <p><b>Requested plot:</b> 
+                    <br><span id="member_request_plot_type_${index}">${element['request_plot_type']}</span>
+                    <br><span id="member_request_plot_number_${index}"> ${element['request_plot_number']}</span>
+                    <br><span id="member_request_plot_date_${index}"> ${element['request_plot_date']}</span>
+                </p>
                 <p><b>Last logged in:</b> ${last_logged_in}</p>
                 <p>
                     <div id="edit_member_button_${index}"> <input type="button"  onclick='open_edit_member(${index},true)' value='Edit' ></div>
@@ -84,7 +87,7 @@ function toggleMemberInfo(index,email) {
 
 
 function open_edit_member(index, open) {
-    const elements = ['first_name','last_name', 'street_address','postal_code', 'phone_number'];
+    const elements = ['first_name','last_name', 'street_address','postal_code','phone_number', 'request_plot_type', 'request_plot_number', 'request_plot_date'];
     const buttons = ['edit_member_button', 'save_edit_member_button', 'cancel_edit_member_button', 'delete_member_button'];
 
     elements.forEach(element => {
@@ -93,10 +96,27 @@ function open_edit_member(index, open) {
         const inputValue = elementEl.textContent.trim();
 
         if (open) {
-            elementEl.innerHTML = `<br><input type="text" id="edit_member_${element}_${index}" value="${inputValue}">`;
+            if(element == "request_plot_type") {
+                
+                elementEl.innerHTML = `
+                    <select id="edit_member_${element}_${index}">
+                        <option value="Raised bed" ${inputValue === 'Raised bed' ? 'selected' : ''}>Raised bed</option>
+                        <option value="Annual" ${inputValue === 'Annual' ? 'selected' : ''}>Annual</option>
+                        <option value="Perennial" ${inputValue === 'Perennial' ? 'selected' : ''}>Perennial</option>
+                        <option value="Locker" ${inputValue === 'Locker' ? 'selected' : ''}>Locker</option>
+                    </select>`;
+
+            } else {
+                elementEl.innerHTML = `<br><input type="text" id="edit_member_${element}_${index}" value="${inputValue}">`;
+            }
         } else {
-            const inputEl = elementEl.querySelector('input');
-            elementEl.textContent = inputEl.value;
+            if (element === "request_plot_type") {
+                const selectEl = elementEl.querySelector('select');
+                elementEl.textContent = selectEl.options[selectEl.selectedIndex].text;
+            } else {
+                const inputEl = elementEl.querySelector('input');
+                elementEl.textContent = inputEl.value;
+            }
         }
     });
 
@@ -121,9 +141,11 @@ function save_edit_member(index,email) {
         street_address: document.getElementById(`edit_member_street_address_${index}`).value,
         postal_code: document.getElementById(`edit_member_postal_code_${index}`).value,
         phone_number: document.getElementById(`edit_member_phone_number_${index}`).value,
+        request_plot_type: document.getElementById(`edit_member_request_plot_type_${index}`).value,
+        request_plot_number: document.getElementById(`edit_member_request_plot_number_${index}`).value,
+        request_plot_date: document.getElementById(`edit_member_request_plot_date_${index}`).value,
         admin: document.getElementById(`admin_checkbox_${index}`).checked,
     };
-
     fetch('https://ixih1qmuzb.execute-api.us-east-1.amazonaws.com/prod', {
         method: 'POST',
         headers: {
@@ -139,13 +161,17 @@ function save_edit_member(index,email) {
     });
 }
 
+function request_plot_checkbox(value){
+    if(value){ document.getElementById('admin_request_plot_container').style.display="flex"}
+    else { document.getElementById('admin_request_plot_container').style.display="none"}
+}
 
 function add_member() {
     const formData = Object.fromEntries([
         'email', 'first_name', 'last_name', 'street_address',
-        'postal_code', 'phone_number'
+        'postal_code', 'phone_number','request_plot','request_plot_type','request_plot_date','request_plot_number'
     ].map(field => {
-        if (field === 'admin') {
+        if (field === 'admin' || field === 'request_plot') {
             return [field, document.getElementById(`admin_input_${field}`).checked];
         } else {
             return [field, document.getElementById(`admin_input_${field}`).value];
