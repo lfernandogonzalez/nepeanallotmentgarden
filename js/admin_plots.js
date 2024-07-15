@@ -20,16 +20,17 @@ function get_plots() {
 
         // Sort plot types alphabetically, except 'lockers' which will be placed last
         const plotTypes = Object.keys(plotsByType)
-            .filter(plotType => plotType !== 'Lockers') // Filter out 'lockers'
+            .filter(plotType => plotType !== 'Locker') // Filter out 'lockers'
             .sort()
-            .concat('Lockers'); // Append 'lockers' at the end
+            .concat('Locker'); // Append 'lockers' at the end
 
         // Iterate over plot types and create divs
         plotTypes.forEach(plotType => {
+            
             const plotsInType = plotsByType[plotType];
             const plotTypeHeader = document.createElement('h2');
             plotTypeHeader.style.paddingLeft = '10px';
-            plotTypeHeader.textContent = plotType;
+            plotTypeHeader.textContent = plotType + "s";
             plot_list.appendChild(plotTypeHeader);
 
             plotsInType

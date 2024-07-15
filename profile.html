@@ -42,32 +42,40 @@
       
       <p><span id="member_email"></span></p>
 
+      
       <!-- My Plots-->
       <div class="my_plots"></div>
-      <input type="checkbox" id="has_plots" style="display:none">
+      
 
+    </div>
       <!--Request new plot -->
       <div class="request_plot" style="display:none">
         <h4>Request a new plot</h4>
         <p>
-          Raised beds are often available within a year or even mid-season.
-          Annuals take an average of 2+ years. Perennials are only available to existing members, and they take an average of 3+ years.
-          Preference is given to existing members on all plots.
+          Please note, due to high demand plots can take up to 3 years to get assigned to a new member. 
         </p>
-        <p><b>What type of plot would you like?</b></p>
-        <select id="request_plot_type">
+
+        <p><b>Name:</b></p>
+        <input class="edit_profile_field" type="text" id="edit_profile_first_name" Placeholder="First Name" >
+        <input class="edit_profile_field" type="text" id="edit_profile_last_name" Placeholder="Last Name" > 
+
+        <p><b>Address:</b></p>
+        <input class="edit_profile_field" type="text" id="edit_profile_street_address" Placeholder="Street Address" >
+        <br><input class="edit_profile_field" type="text" id="edit_profile_postal_code" Placeholder="Postal Code">
+        
+        <p><b>Phone Number:</b></p>
+        <input class="edit_profile_field" id="edit_profile_phone_number" type="text" Placeholder="000-000-0000">
+        
+        <p><b>Plot type:</b></p>
+        <select id="edit_profile_request_plot_type">
           <option value="Raised bed">Raised bed</option>
           <option value="Annual">Annual</option>
           <option value="Perennial" id="perennial_option">Perennial</option>
           <option value="Locker">Locker</option>
         </select>
         
-        <p><b>Plot number:</b></p>
-        <select onchange="special_request(this.value)">
-          <option>First available</option>
-          <option value="true">Special request</option>
-        </select>
-        <input type="textarea" class="request_plot_number"  placeholder="Type in your request (eg, plot number)">
+        <p><b>Notes:</b></p>
+        <input type="textarea" class="edit_profile_field" id="edit_profile_request_plot_notes">
         
         <div id="exchange_plot_form" style="display:none">
           <b>Would you like to trade in one of your current plots?</b>
@@ -75,6 +83,7 @@
             <option value="No">No</option>
           </select>
         </div>
+        <input type="checkbox" id="edit_profile_has_plots" style="display:none">
 
         <p></p>
         
@@ -94,13 +103,12 @@
         <p>We have received your plot request and you are currently on our waiting list:</p>
         <div>
           <b>Requested plot:</b> <span id="requested_plot_type"></span>
-          <br><b>Plot number:</b> <span id="requested_plot_number"></span>
+          <br><b>Notes:</b> <span id="requested_plot_notes"></span>
           <br><b>Date joined:</b> <span id="requested_date_joined"></span> 
     
         </div>
         
       </div>
-      <input type="button" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
       <input type="button" class="cancel_plot_request_button" value="Cancel request" onclick="cancel_plot_request()">
 
       
@@ -110,8 +118,7 @@
       </div>
       
       <div class="user_action_buttons">
-        <input type="button" class="edit_profile_button" onclick="open_edit_profile(true);" value="Edit Profile"> 
-        
+        <input type="button" class="request_plot_button" onclick="open_request_plot(true);" value="Request new plot">
         <div id="admin_access" style="display:none">
           <input type="hidden" id="member_admin">
           <input type="button" onclick="window.location.href='./admin.html'" value="Admin Console">
@@ -119,33 +126,11 @@
         <input type="button" onclick="sign_out();" value="Sign out">
       </div>
 
-      <!-- Edit profile -->
-      <div class="edit_profile" style="display:none">
-        <h4>Edit profile</h4>
-        <p>Please complete your profile information in order to expedite plot assignment. </p>
-        <p><b>Name:</b></p>
-        <input type="text" id="edit_profile_first_name" Placeholder="First Name" >
-        <br>
-        <input type="text" id="edit_profile_last_name" Placeholder="Last Name" > 
-
-        <p><b>Address:</b></p>
-        <input type="text" id="edit_profile_street_address" Placeholder="Street Address" >
-        <br><input type="text" id="edit_profile_postal_code" Placeholder="Postal Code">
-        
-        <p><b>Phone Number:</b></p>
-        <input  id="edit_profile_phone_number" type="text" Placeholder="000-000-0000">
-        
-        <p></p>
-        <input type="button" onclick="update_profile();" value="Save" style="display:inline-block; "> 
-        <input type="button" onclick="open_edit_profile(false);" value="Cancel" style="display:inline-block; background-color:tomato">
-        </div>
-        
-      </div>
 
       <p></p>
 
       
-    </div>
+    
 
   
 

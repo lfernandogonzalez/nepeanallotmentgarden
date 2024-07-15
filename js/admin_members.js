@@ -100,6 +100,7 @@ function open_edit_member(index, open) {
                 
                 elementEl.innerHTML = `
                     <select id="edit_member_${element}_${index}">
+                        <option value=""></option>
                         <option value="Raised bed" ${inputValue === 'Raised bed' ? 'selected' : ''}>Raised bed</option>
                         <option value="Annual" ${inputValue === 'Annual' ? 'selected' : ''}>Annual</option>
                         <option value="Perennial" ${inputValue === 'Perennial' ? 'selected' : ''}>Perennial</option>
@@ -134,7 +135,7 @@ function open_edit_member(index, open) {
 
 
 function save_edit_member(index,email) {
-    const requestBody = {
+    const data = {
         email:email,
         first_name: document.getElementById(`edit_member_first_name_${index}`).value,
         last_name: document.getElementById(`edit_member_last_name_${index}`).value,
@@ -152,7 +153,7 @@ function save_edit_member(index,email) {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(response => {

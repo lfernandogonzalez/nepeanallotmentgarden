@@ -118,10 +118,10 @@ function filter(tab) {
     if(input.includes("plot_type_"))
     {
        console.log(input)
-       document.getElementById(tab+'_raised_beds').style.display="none";
+       document.getElementById(tab+'_raised_bed').style.display="none";
        document.getElementById(tab+'_annuals').style.display="none";
-       document.getElementById(tab+'_perennials').style.display="none";
-       document.getElementById(tab+'_lockers').style.display="none";
+       document.getElementById(tab+'_perennial').style.display="none";
+       document.getElementById(tab+'_locker').style.display="none";
        document.getElementById(tab+"_"+input.replace("plot_type_","")).style.display="";
        
         console.log('Filter applied');
@@ -131,10 +131,10 @@ function filter(tab) {
     if(input=="all_"+tab && tab != "members")
     {
        
-       document.getElementById(tab+'_raised_beds').style.display="";
-       document.getElementById(tab+'_annuals').style.display="";
-       document.getElementById(tab+'_perennials').style.display="";
-       document.getElementById(tab+'_lockers').style.display="";
+       document.getElementById(tab+'_raised_bed').style.display="";
+       document.getElementById(tab+'_annual').style.display="";
+       document.getElementById(tab+'_perennial').style.display="";
+       document.getElementById(tab+'_locker').style.display="";
        
         console.log('Filter applied: all waiting lists');
     }

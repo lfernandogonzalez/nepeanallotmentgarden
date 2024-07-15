@@ -3,7 +3,6 @@ input[type=button], input[type=text],input[type=textarea], select  {
     margin-top: 5px;
     margin-bottom: 5px;
     box-sizing: border-box;
-    width:100%;
 }
 
 input[type=button] {
@@ -13,8 +12,13 @@ input[type=button] {
     cursor: pointer;
 }
 
+.edit_profile_field {
+    
+    width:auto;
+    display:inline-block;
+}
 
-.edit_profile, .request_plot {
+.edit_profile {
     position: fixed;
     top: 50%;
     left: 50%;

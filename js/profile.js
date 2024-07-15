@@ -32,7 +32,7 @@ async function get_user_info(email) {
   const api_data = await api_response.json();
   const userData = JSON.parse(api_data['body']);
   console.log('User data:' + JSON.stringify(api_data));
-  document.getElementById('has_plots').checked = userData['has_plots'] !== undefined ? userData['has_plots'] : 'false';
+  document.getElementById('edit_profile_has_plots').checked = userData['has_plots'] !== undefined ? userData['has_plots'] : 'false';
 
   
 
@@ -50,41 +50,6 @@ async function get_user_info(email) {
   });
   get_my_plots(); // Fetch user plots after retrieving user info
   get_requested_plots(); // Fetch requested plots after retrieving user info
-}
-
-function open_edit_profile(open) {
-  document.querySelector('.overlay').style.display = open ? "block" : "none";
-  document.querySelector('.edit_profile').style.display = open ? "block" : "none";
-}
-
-function update_profile() {
-  const email = document.getElementById('member_email').innerHTML;
-  const admin = document.getElementById('member_admin').value;
-  const fields = ['first_name', 'last_name', 'street_address', 'postal_code', 'phone_number'];
-  const data = {};
-
-  data['email'] = email;
-  data['admin'] = admin;
-
-  fields.forEach(field => {
-    const value = document.getElementById('edit_profile_' + field).value;
-    if (value) {
-      data[field] = value;
-    }
-  });
-
-  fetch('https://ixih1qmuzb.execute-api.us-east-1.amazonaws.com/prod', {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-    .then(response => response.json())
-    .then(response => {
-      open_edit_profile(false);
-    });
 }
 
 function sign_out() {
@@ -116,10 +81,7 @@ function sign_out() {
 function get_my_plots() {
   showLoader(); // Show loader while fetching user plots
   const email = document.getElementById('member_email').innerHTML;
-  console.log('Email: ' + email);
-
   const api_url = 'https://90oukjmsob.execute-api.us-east-1.amazonaws.com/prod/get_my_plots?email=' + encodeURIComponent(email);
-  console.log(api_url);
 
   fetch(api_url, {
     method: 'GET',
@@ -162,9 +124,9 @@ function get_my_plots() {
         tabContent.innerHTML = `
           <div style="display: flex; align-items: center; border:none">
             <div style="border:none; text-align:center">
-            <img src="img/icon_${imageName}.png" alt="Plot Image" style="width: 100px; ">
-            <br>Plot # ${plotId}<br>
-            ${plotType}
+            <img src="img/icon_${imageName}s.png" alt="Plot Image" style="width: 100px; ">
+            <br>${plotType}<br>${plotId}<br>
+            
             </div>
             <div style="border:none">
               <br>Size: ${width}x ${height} feet
@@ -189,12 +151,11 @@ async function get_requested_plots() {
   const api_url = 'https://thv3sn3j63.execute-api.us-east-1.amazonaws.com/prod/get_naga_user_by_email?user_email=' + encodeURIComponent(email);
   const api_response = await fetch(api_url);
   const api_data = await api_response.json();
-  console.log(api_data);
 
-  if(JSON.parse(api_data['body'])['request_plot']) {
+  if(JSON.parse(api_data['body'])['request_plot_type']) {
 
     document.getElementById('requested_plot_type').innerText = JSON.parse(api_data['body'])['request_plot_type'];
-    document.getElementById('requested_plot_number').innerText = JSON.parse(api_data['body'])['request_plot_number'];
+    document.getElementById('requested_plot_notes').innerText = JSON.parse(api_data['body'])['request_plot_notes'];
     document.getElementById('requested_date_joined').innerText = new Date(JSON.parse(api_data['body'])['request_plot_date']).toLocaleDateString();;
     
 
@@ -216,93 +177,66 @@ async function get_requested_plots() {
 }
 
 function open_request_plot(open) {
-  document.querySelector('.overlay').style.display = open ? "block" : "none";
   document.querySelector('.request_plot').style.display = open ? "block" : "none";
+  document.querySelector('.my_plots').style.display = open ? "none" : "block";
+  document.querySelector('.user_action_buttons').style.display = open ? "none" : "block";
+  document.querySelector('h4').scrollIntoView({ behavior: 'smooth' });
 }
 
 function request_plot() {
-  showLoader();
-
+  
   const email = document.getElementById('member_email').textContent;
-  const request_plot_type = document.getElementById('request_plot_type').value;
-  const request_plot_number = document.querySelector('.request_plot_number').value || "First available";
-  const has_plots_value = document.getElementById('has_plots').checked;
-  const has_plots = has_plots_value ? true : false;
+  const admin = document.getElementById('member_admin').value;
+  const fields = ['first_name', 'last_name', 'street_address', 'postal_code', 'phone_number','has_plots','request_plot_type','request_plot_notes'];
+  let data= {};
 
-  const requestData = {
-    email,
-    request_plot: true,
-    request_plot_type,
-    request_plot_number,
-    has_plots
-  };
+  fields.forEach(field => {
+    const value = document.getElementById('edit_profile_' + field).value;
+    if (value) {
+      data[field] = value;
+    }
+  }); 
+  data['email'] = email;
+  data['admin'] = admin;
 
-  fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {
+
+  fetch('https://ixih1qmuzb.execute-api.us-east-1.amazonaws.com/prod', {
     method: 'POST',
-    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestData)
+    headers: { 'Accept': 'application/json','Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
   })
-  .then(response => {
-    if (!response.ok) throw new Error('Network response was not ok');
-    return response.json();
-  })
-  .then(response => {
-    open_request_plot(false);
-    get_requested_plots();
-  })
+    .then(response => response.json())
+    .then(response => {
+      open_request_plot(false);
+      get_requested_plots();
+    })
   .catch(error => console.error('There was a problem with the fetch operation:', error));
 }
 
 
 
-function special_request(special) {
-  
-  if (special === 'true') { document.querySelector('.request_plot_number').style.display = 'block';}
-  else { document.querySelector('.request_plot_number').style.display = 'none';}
-}
 
 function cancel_plot_request() {
   if (!confirm('Are you sure you want to cancel this request? You will lose your place in line')) return;
 
   const email = document.getElementById('member_email').textContent;
-  const requestData = {
+  const data = {
     email,
-    request_plot: false,
-    request_plot_type: " ",
-    request_plot_number: " ",
-    request_plot_date: " ",
     cancel_request: true
   };
 
-  fetch('https://ln7qb82w92.execute-api.us-east-1.amazonaws.com/prod', {
+  fetch('https://ixih1qmuzb.execute-api.us-east-1.amazonaws.com/prod', {
     method: 'POST',
     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(requestData)
+    body: JSON.stringify(data)
   })
-  .then(response => {
-    if (!response.ok) throw new Error('Network response was not ok');
-    return response.json();
-  })
-  .then(response => {
-    get_requested_plots();
-    document.querySelector('.request_plot').style.display = 'none';
-    document.querySelector('.overlay').style.display = 'none';
-  })
+    .then(response => response.json())
+    .then(response => {
+      open_request_plot(false);
+      get_requested_plots();
+    })
   .catch(error => console.error('There was a problem with the fetch operation:', error));
-}
-
-
-function request_plot_number(value) {
-  if (value == "special_request") {
-    document.getElementById('request_plot_number').style.display = "inline-block";
-  } else {
-    document.getElementById('request_plot_number').style.display = "none";
-  }
-}
-
-function open_newsletter_archive() {
-  var newsletterArchive = document.querySelector('.newsletter_archive');
-  newsletterArchive.style.display = newsletterArchive.style.display === "block" ? "none" : "block";
 }
 
 
